@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retreat Submission Portal</title>
+    <title>Experiential Holidays Submission Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .form-card { border-top: 10px solid #1e40af; }
@@ -14,7 +14,7 @@
 
     <nav class="bg-white border-b sticky top-0 z-50 p-4">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-black tracking-tight text-blue-800 uppercase">Retreat Hub</h1>
+            <h1 class="text-xl font-black tracking-tight text-blue-800 uppercase">Experiential Holidays</h1>
             <button id="login-btn" class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 shadow-md transition">Login with Google</button>
             <div id="user-info" class="hidden flex items-center gap-4">
                 <span id="user-display-email" class="text-sm font-medium text-slate-500"></span>
@@ -25,17 +25,18 @@
 
     <div class="max-w-4xl mx-auto px-4 mt-8">
         <div id="login-prompt" class="text-center py-20 bg-white rounded-2xl shadow-sm border">
-            <h2 class="text-2xl font-bold mb-2">Welcome to the Retreat Portal</h2>
-            <p class="text-slate-500 mb-6">Please sign in to submit or manage your retreats.</p>
+            <h2 class="text-2xl font-bold mb-2">Welcome to the Portal</h2>
+            <p class="text-slate-500 mb-6">Please sign in to submit or manage your offerings.</p>
         </div>
 
         <div id="main-app" class="hidden space-y-8">
             <div id="form-container" class="bg-white rounded-xl shadow-lg border form-card p-8">
-                <h2 class="text-3xl font-extrabold mb-6">Submit your Retreat</h2>
+                <h2 class="text-3xl font-extrabold mb-1">Offer your experience</h2>
+                <p class="text-slate-500 mb-8 text-sm italic">Share your retreat, immersive holiday, or transformational experience with travelers seeking meaningful journeys.</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
-                        <label class="block font-bold mb-2">Retreat Name *</label>
+                        <label class="block font-bold mb-2">Experience Name (Title) *</label>
                         <input type="text" id="retreatName" class="w-full bg-slate-50 border-b-2 border-slate-200 p-3 outline-none focus:border-blue-600 transition">
                     </div>
 
@@ -95,8 +96,9 @@
                     </div>
 
                     <div class="md:col-span-2 mt-4 pt-6 border-t">
-                        <h3 class="text-lg font-bold mb-4 text-blue-800 underline uppercase tracking-tight">Organization & Contact Details</h3>
+                        <h3 class="text-3xl font-extrabold mb-6">Organization & Contact Details</h3>
                     </div>
+                    
                     <div class="md:col-span-2">
                         <label class="block font-bold mb-2">Organization Name & Bio *</label>
                         <textarea id="orgInfo" rows="2" class="w-full bg-slate-50 border p-3 rounded-lg outline-none"></textarea>
@@ -123,7 +125,7 @@
                     </div>
                 </div>
 
-                <button id="submit-btn" class="mt-10 w-full bg-blue-800 text-white font-black py-4 rounded-xl shadow-lg hover:bg-blue-900 transition uppercase tracking-widest">Submit Retreat</button>
+                <button id="submit-btn" class="mt-10 w-full bg-blue-800 text-white font-black py-4 rounded-xl shadow-lg hover:bg-blue-900 transition uppercase tracking-widest">Submit Experience</button>
                 <p id="status" class="text-center mt-4 text-sm font-bold text-blue-600"></p>
             </div>
 
@@ -245,7 +247,7 @@
                     categories: checkedCats,
                     description: document.getElementById('description').value,
                     contribution: document.getElementById('contribution').value,
-                    videoLink: document.getElementById('videoLink').value, // SAVING VIDEO LINK
+                    videoLink: document.getElementById('videoLink').value, 
                     orgInfo: document.getElementById('orgInfo').value,
                     contactName: document.getElementById('contactName').value,
                     contactEmail: document.getElementById('contactEmail').value,
@@ -272,13 +274,11 @@
                     const r = snap.data();
                     if (auth.currentUser.email !== r.userEmail) return;
 
-                    // YOUTUBE PREVIEW LOGIC INTEGRATED
                     let videoPreview = "";
-                    if(r.videoLink && r.videoLink.includes("youtube.com/watch?v=")) {
-                        const vidId = r.videoLink.split("v=")[1].split("&")[0];
-                        videoPreview = `<iframe class="w-full aspect-video rounded-lg mt-3" src="https://www.youtube.com/embed/${vidId}" frameborder="0" allowfullscreen></iframe>`;
-                    } else if(r.videoLink && r.videoLink.includes("youtu.be/")) {
-                        const vidId = r.videoLink.split("youtu.be/")[1].split("?")[0];
+                    if(r.videoLink && (r.videoLink.includes("youtube.com") || r.videoLink.includes("youtu.be"))) {
+                        let vidId = "";
+                        if(r.videoLink.includes("v=")) vidId = r.videoLink.split("v=")[1].split("&")[0];
+                        else vidId = r.videoLink.split("be/")[1].split("?")[0];
                         videoPreview = `<iframe class="w-full aspect-video rounded-lg mt-3" src="https://www.youtube.com/embed/${vidId}" frameborder="0" allowfullscreen></iframe>`;
                     }
 
@@ -299,7 +299,7 @@
                 });
             });
         }
-        window.deleteRetreat = (id) => confirm("Delete this retreat?") && deleteDoc(doc(db, "retreats", id));
+        window.deleteRetreat = (id) => confirm("Delete this experience?") && deleteDoc(doc(db, "retreats", id));
     </script>
 </body>
 </html>
