@@ -31,66 +31,77 @@
 
         <div id="main-app" class="hidden space-y-8">
             <div id="form-container" class="bg-white rounded-xl shadow-lg border form-card p-8">
-                <h2 id="form-usage-title" class="text-3xl font-extrabold mb-6">Submit your Retreat</h2>
+                <h2 class="text-3xl font-extrabold mb-6">Submit your Retreat</h2>
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
                         <label class="block font-bold mb-2">Retreat Name *</label>
                         <input type="text" id="retreatName" class="w-full bg-slate-50 border-b-2 border-slate-200 p-3 outline-none focus:border-blue-600 transition">
                     </div>
+
                     <div>
                         <label class="block font-bold mb-2">Pick State *</label>
                         <select id="state" class="w-full bg-slate-50 border p-3 rounded-lg outline-none">
                             <option value="">Select State/UT</option>
-                            <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option><option>Bihar</option><option>Chhattisgarh</option>
-                            <option>Goa</option><option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option><option>Jharkhand</option>
-                            <option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option>
-                            <option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option><option>Odisha</option><option>Punjab</option>
-                            <option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option><option>Tripura</option>
-                            <option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option>
-                            <option disabled>──────────</option>
-                            <option>Delhi</option><option>Jammu and Kashmir</option><option>Ladakh</option><option>Puducherry</option><option>Chandigarh</option>
+                            <option>Goa</option><option>Uttarakhand</option><option>Himachal Pradesh</option><option>Kerala</option><option>Karnataka</option><option>Maharashtra</option><option>Rajasthan</option>
                         </select>
                     </div>
+
                     <div>
-                        <label class="block font-bold mb-2">City (Nearest city) *</label>
-                        <input type="text" id="city" class="w-full bg-slate-50 border-b-2 border-slate-200 p-3 outline-none focus:border-blue-600 transition">
+                        <label class="block font-bold mb-2">City *</label>
+                        <input type="text" id="city" class="w-full bg-slate-50 border p-3 rounded-lg outline-none">
                     </div>
-                    <div>
-                        <label class="block font-bold mb-2">Start Date & Time *</label>
-                        <div class="flex gap-2">
-                            <input type="date" id="startDate" class="w-full bg-slate-50 border p-3 rounded-lg">
-                            <input type="time" id="startTime" class="w-full bg-slate-50 border p-3 rounded-lg">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block font-bold mb-2">End Date & Time</label>
-                        <div class="flex gap-2">
-                            <input type="date" id="endDate" class="w-full bg-slate-50 border p-3 rounded-lg">
-                            <input type="time" id="endTime" class="w-full bg-slate-50 border p-3 rounded-lg">
-                        </div>
-                    </div>
+
                     <div class="md:col-span-2">
-                        <label class="block font-bold mb-3">Select Categories *</label>
-                        <div id="category-list" class="grid grid-cols-2 md:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl max-h-60 overflow-y-auto border"></div>
+                        <label class="block font-bold mb-2">Contribution (Briefly mention Inclusion and Exclusion) *</label>
+                        <textarea id="contribution" rows="3" class="w-full bg-slate-50 border p-3 rounded-lg outline-none" placeholder="What is included in the price? What is not?"></textarea>
                     </div>
-                    <div class="md:col-span-2">
-                        <label class="block font-bold mb-2">Description *</label>
-                        <textarea id="description" rows="4" class="w-full bg-slate-50 border p-3 rounded-lg outline-none"></textarea>
-                    </div>
+
                     <div class="md:col-span-2 border-2 border-dashed border-slate-200 p-6 rounded-xl text-center bg-slate-50">
-                        <label class="block font-bold mb-2">Upload Image or PDF</label>
-                        <input type="file" id="fileUpload" class="text-sm">
+                        <label class="block font-bold mb-2">Upload Photos, Videos, or PDFs</label>
+                        <input type="file" id="fileUpload" multiple accept="image/*,video/*,.pdf" class="text-sm">
+                        <p class="text-[10px] text-slate-400 mt-2">Max 5 files. Each file must be under 10MB.</p>
                     </div>
+
+                    <div class="md:col-span-2 mt-4 pt-6 border-t">
+                        <h3 class="text-lg font-bold mb-4 text-blue-800">Organizer Details</h3>
+                    </div>
+                    
                     <div class="md:col-span-2">
+                        <label class="block font-bold mb-2">Organization Name (Include short bio) *</label>
+                        <textarea id="orgBio" rows="2" class="w-full bg-slate-50 border p-3 rounded-lg outline-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold mb-2">Contact Person Name *</label>
+                        <input type="text" id="contactName" class="w-full bg-slate-50 border p-3 rounded-lg outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-bold mb-2">Contact Email *</label>
+                        <input type="email" id="contactEmail" class="w-full bg-slate-50 border p-3 rounded-lg outline-none">
+                    </div>
+
+                    <div>
                         <label class="block font-bold mb-2">WhatsApp Number *</label>
-                        <input type="tel" id="contactWhatsApp" class="w-full bg-slate-50 border p-3 rounded-lg">
+                        <input type="tel" id="contactWhatsApp" class="w-full bg-slate-50 border p-3 rounded-lg outline-none">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block font-bold mb-2">Links (Social Media, Website, etc.)</label>
+                        <div id="links-container" class="space-y-2">
+                            <input type="url" class="link-input w-full bg-slate-50 border p-3 rounded-lg outline-none" placeholder="https://...">
+                        </div>
+                        <button type="button" onclick="addLinkField()" class="mt-2 text-blue-600 text-sm font-bold">+ Add more links</button>
                     </div>
                 </div>
-                <button id="submit-btn" class="mt-10 w-full bg-blue-800 text-white font-black py-4 rounded-xl shadow-lg hover:scale-[1.01] transition-transform uppercase tracking-widest">Submit Retreat</button>
+
+                <button id="submit-btn" class="mt-10 w-full bg-blue-800 text-white font-black py-4 rounded-xl shadow-lg hover:bg-blue-900 uppercase tracking-widest transition">Submit Retreat</button>
                 <p id="status" class="text-center mt-4 text-sm font-bold text-blue-600"></p>
             </div>
+
             <div class="mt-12">
-                <h3 class="text-2xl font-black mb-6 flex items-center gap-3">Manage Your Retreats</h3>
+                <h3 class="text-2xl font-black mb-6">Your Submissions</h3>
                 <div id="gallery" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
             </div>
         </div>
@@ -99,7 +110,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         const firebaseConfig = {
@@ -117,13 +128,14 @@
         const storage = getStorage(app);
         const provider = new GoogleAuthProvider();
 
-        let editingId = null;
-
-        const categories = ["Yoga & Breathwork", "Ayurveda", "Medical", "Detox", "Sleep", "Movement", "Creative", "Silent", "Nature", "Sustainability"];
-        const catList = document.getElementById('category-list');
-        categories.forEach(cat => {
-            catList.innerHTML += `<div class="flex items-center gap-2"><input type="checkbox" name="category" value="${cat}" id="${cat}"><label for="${cat}" class="text-xs">${cat}</label></div>`;
-        });
+        window.addLinkField = () => {
+            const container = document.getElementById('links-container');
+            const input = document.createElement('input');
+            input.type = 'url';
+            input.className = 'link-input w-full bg-slate-50 border p-3 rounded-lg outline-none';
+            input.placeholder = 'https://...';
+            container.appendChild(input);
+        };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -146,45 +158,49 @@
 
         document.getElementById('submit-btn').onclick = async () => {
             const status = document.getElementById('status');
-            const file = document.getElementById('fileUpload').files[0];
-            const checkedCats = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
-            status.innerText = "Processing...";
+            const fileInput = document.getElementById('fileUpload');
+            const files = fileInput.files;
+            
+            if (files.length > 5) return alert("Maximum 5 files allowed.");
+
+            status.innerText = "Uploading files and saving data...";
 
             try {
-                let fileUrl = "";
-                if (file) {
-                    const sRef = ref(storage, 'retreats/' + Date.now() + "_" + file.name);
+                const fileUrls = [];
+                for (let file of files) {
+                    if (file.size > 10 * 1024 * 1024) throw new Error(`${file.name} is too large (max 10MB)`);
+                    const sRef = ref(storage, `retreats/${Date.now()}_${file.name}`);
                     const snap = await uploadBytes(sRef, file);
-                    fileUrl = await getDownloadURL(snap.ref);
+                    const url = await getDownloadURL(snap.ref);
+                    fileUrls.push(url);
                 }
+
+                const links = Array.from(document.querySelectorAll('.link-input'))
+                                   .map(input => input.value)
+                                   .filter(val => val.trim() !== "");
 
                 const retreatData = {
                     retreatName: document.getElementById('retreatName').value,
                     state: document.getElementById('state').value,
                     city: document.getElementById('city').value,
-                    startDate: document.getElementById('startDate').value,
-                    startTime: document.getElementById('startTime').value,
-                    categories: checkedCats,
-                    description: document.getElementById('description').value,
+                    contribution: document.getElementById('contribution').value,
+                    orgBio: document.getElementById('orgBio').value,
+                    contactName: document.getElementById('contactName').value,
+                    contactEmail: document.getElementById('contactEmail').value,
                     contactWhatsApp: document.getElementById('contactWhatsApp').value,
-                    fileUrl: fileUrl,
+                    links: links,
+                    fileUrls: fileUrls,
                     userEmail: auth.currentUser.email,
                     timestamp: Date.now()
                 };
 
-                if (editingId) {
-                    await updateDoc(doc(db, "retreats", editingId), retreatData);
-                    editingId = null;
-                    document.getElementById('submit-btn').innerText = "Submit Retreat";
-                } else {
-                    await addDoc(collection(db, "retreats"), retreatData);
-                }
-                status.innerText = "Success!";
-                resetForm();
-            } catch (err) { status.innerText = "Error: " + err.message; }
+                await addDoc(collection(db, "retreats"), retreatData);
+                status.innerText = "Retreat Submitted Successfully!";
+                setTimeout(() => location.reload(), 2000);
+            } catch (err) {
+                status.innerText = "Error: " + err.message;
+            }
         };
-
-        function resetForm() { document.querySelectorAll('input, select, textarea').forEach(el => el.value = ""); }
 
         function loadData() {
             const q = query(collection(db, "retreats"), orderBy("timestamp", "desc"));
@@ -194,18 +210,23 @@
                 snapshot.forEach((snap) => {
                     const r = snap.data();
                     const id = snap.id;
-                    const isOwner = auth.currentUser.email === r.userEmail;
-                    gallery.innerHTML += `<div class="bg-white p-6 rounded-xl border">
-                        <h4 class="font-bold">${r.retreatName}</h4>
-                        <p class="text-xs text-slate-400">${r.city}, ${r.state}</p>
-                        <div class="mt-4 flex gap-4">
-                            ${isOwner ? `<button onclick="window.deleteRetreat('${id}')" class="text-xs text-red-500">DELETE</button>` : ''}
+                    if (auth.currentUser.email !== r.userEmail) return;
+
+                    gallery.innerHTML += `
+                        <div class="bg-white p-6 rounded-xl border shadow-sm">
+                            <h4 class="font-bold text-blue-900">${r.retreatName}</h4>
+                            <p class="text-xs text-slate-400 mb-2">${r.city}, ${r.state}</p>
+                            <p class="text-sm line-clamp-2 text-slate-600 mb-4">${r.orgBio}</p>
+                            <div class="flex justify-between items-center border-t pt-4">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">${r.fileUrls.length} Files attached</span>
+                                <button onclick="window.deleteRetreat('${id}')" class="text-xs text-red-500 font-bold">DELETE</button>
+                            </div>
                         </div>
-                    </div>`;
+                    `;
                 });
             });
         }
-        window.deleteRetreat = (id) => confirm("Delete?") && deleteDoc(doc(db, "retreats", id));
+        window.deleteRetreat = (id) => confirm("Delete this retreat?") && deleteDoc(doc(db, "retreats", id));
     </script>
 </body>
 </html>
