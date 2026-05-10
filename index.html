@@ -72,7 +72,6 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-1">End Date & Time *</label>
                     <div class="flex gap-2">
-                        <!-- END DATE IS NOW COMPULSORY -->
                         <input type="date" id="endDate" class="w-full bg-slate-50 border-2 border-slate-100 p-2 rounded-lg text-sm" required>
                         <input type="time" id="endTime" class="w-full bg-slate-50 border-2 border-slate-100 p-2 rounded-lg text-sm">
                     </div>
@@ -143,17 +142,16 @@
                     <thead>
                         <tr>
                             <th>Actions</th>
-                            <th>Title <select class="excel-filter" onchange="applyExcelFilter(1, this.value)"><option value="">All</option></select></th>
-                            <th>Location <select class="excel-filter" onchange="applyExcelFilter(2, this.value)"><option value="">All</option></select></th>
-                            <th>Date <select class="excel-filter" onchange="applyExcelFilter(3, this.value)"><option value="">All</option></select></th>
-                            <th>Categories <select class="excel-filter" onchange="applyExcelFilter(4, this.value)"><option value="">All</option></select></th>
-                            <th>Organization <select class="excel-filter" onchange="applyExcelFilter(5, this.value)"><option value="">All</option></select></th>
-                            <th>Media <select class="excel-filter" onchange="applyExcelFilter(6, this.value)"><option value="">All</option></select></th>
-                            <th>Host (Login) <select class="excel-filter" onchange="applyExcelFilter(7, this.value)"><option value="">All</option></select></th>
+                            <th>Title</th>
+                            <th>Location</th>
+                            <th>Date</th>
+                            <th>Categories</th>
+                            <th>Organization</th>
+                            <th>Media</th>
+                            <th>Host (Login)</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body">
-                        </tbody>
+                    <tbody id="table-body"></tbody>
                 </table>
             </div>
         </div>
@@ -179,7 +177,6 @@
         const storage = getStorage(app);
         const provider = new GoogleAuthProvider();
 
-        // UPDATED CATEGORY LIST
         const ALL_CATEGORIES = [
             "Wellness & Healing", "Mental Health & Emotional Growth", "Spirituality & Consciousness", 
             "Fitness, Movement & Martial Arts", "Adventure & Outdoor Exploration", 
@@ -191,13 +188,14 @@
         
         const STATES = ["Andaman and Nicobar", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "D&N Haveli & Daman Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "JK", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "MP", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "TN", "Telangana", "Tripura", "UP", "Uttarakhand", "West Bengal"];
 
+        // UI Initialization
         const stateSelect = document.getElementById('state');
         STATES.forEach(s => stateSelect.innerHTML += `<option value="${s}">${s}</option>`);
         
         const catList = document.getElementById('category-list');
         ALL_CATEGORIES.forEach(c => {
             catList.innerHTML += `<label class="flex items-center gap-2 text-xs bg-white p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50">
-                <input type="checkbox" name="cat" value="${c}" class="rounded" onchange="toggleOtherInput(this)"> ${c}
+                <input type="checkbox" name="cat" value="${c}" class="rounded" onchange="window.toggleOtherInput(this)"> ${c}
             </label>`;
         });
 
@@ -209,21 +207,19 @@
             }
         };
 
-        // FILE SELECTION LISTENER (Display names and validate)
+        // File Selection Listener
         document.getElementById('fileUpload').onchange = function() {
             const display = document.getElementById('file-name-display');
             display.innerHTML = "";
             const files = this.files;
-
             if(files.length > 5) {
-                alert("You can only upload a maximum of 5 files.");
+                alert("Maximum 5 files allowed.");
                 this.value = "";
                 return;
             }
-
             for(let f of files) {
                 if(f.size > 10 * 1024 * 1024) {
-                    alert(`File ${f.name} is too large. Max size is 10MB.`);
+                    alert(`File ${f.name} exceeds 10MB.`);
                     this.value = "";
                     display.innerHTML = "";
                     return;
@@ -232,6 +228,7 @@
             }
         };
 
+        // Auth Logic
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-btn').classList.add('hidden');
@@ -249,18 +246,18 @@
         document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
+        // Submit Logic
         document.getElementById('submit-btn').onclick = async () => {
             const editId = document.getElementById('editingId').value;
             const btn = document.getElementById('submit-btn');
             const files = document.getElementById('fileUpload').files;
             
-            // Basic validation for required fields
             if(!document.getElementById('retreatName').value || !document.getElementById('endDate').value) {
                 alert("Please fill all required fields, including the End Date.");
                 return;
             }
 
-            btn.innerText = "UPLOADING DATA...";
+            btn.innerText = "UPLOADING...";
             btn.disabled = true;
 
             try {
@@ -300,15 +297,11 @@
                 };
 
                 if(fileUrls.length > 0) data.fileUrls = fileUrls;
-
-                if(editId) {
-                    await updateDoc(doc(db, "retreats", editId), data);
-                } else {
-                    await addDoc(collection(db, "retreats"), data);
-                }
+                if(editId) { await updateDoc(doc(db, "retreats", editId), data); } 
+                else { await addDoc(collection(db, "retreats"), data); }
                 location.reload();
             } catch (e) { 
-                alert("Error saving: " + e.message); 
+                alert("Error: " + e.message); 
                 btn.innerText = "Update Master Database";
                 btn.disabled = false;
             }
@@ -321,4 +314,46 @@
                 body.innerHTML = "";
                 snapshot.forEach((snap) => {
                     const r = snap.data();
-                    const cats = r.ca
+                    const cats = r.categories ? r.categories.map(c => `<span class="category-chip">${c}</span>`).join('') : '';
+                    body.innerHTML += `
+                        <tr>
+                            <td>
+                                <div class="flex gap-2">
+                                    <button onclick="window.editEvent('${snap.id}')" class="btn-action btn-edit">Edit</button>
+                                    <button onclick="window.deleteEvent('${snap.id}')" class="btn-action btn-delete">Del</button>
+                                </div>
+                            </td>
+                            <td class="font-bold text-slate-900">${r.retreatName}</td>
+                            <td>${r.city}, ${r.state}</td>
+                            <td>${r.startDate} to ${r.endDate}</td>
+                            <td>${cats}</td>
+                            <td>${r.contactName}</td>
+                            <td>${r.fileUrls ? '📎 '+r.fileUrls.length : ''}</td>
+                            <td>${r.hostEmail}</td>
+                        </tr>`;
+                });
+            });
+        }
+
+        window.editEvent = async (id) => {
+            const d = await getDoc(doc(db, "retreats", id));
+            const r = d.data();
+            document.getElementById('editingId').value = id;
+            document.getElementById('retreatName').value = r.retreatName;
+            document.getElementById('state').value = r.state;
+            document.getElementById('city').value = r.city;
+            document.getElementById('startDate').value = r.startDate;
+            document.getElementById('endDate').value = r.endDate;
+            document.getElementById('description').value = r.description;
+            document.getElementById('contactName').value = r.contactName;
+            document.getElementById('orgContactEmail').value = r.orgContactEmail;
+            document.getElementById('form-title').innerText = "Editing: " + r.retreatName;
+            document.getElementById('cancel-edit').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        };
+
+        window.deleteEvent = (id) => confirm("Permanently delete?") && deleteDoc(doc(db, "retreats", id));
+        document.getElementById('cancel-edit').onclick = () => location.reload();
+    </script>
+</body>
+</html>
