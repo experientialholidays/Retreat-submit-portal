@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiential Holidays | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .data-table-container { overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); background: white; }
+        .mgmt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .mgmt-table th { background: #f1f5f9; padding: 12px; border-bottom: 2px solid #e2e8f0; text-align: left; }
+        .mgmt-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #475569; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn-action { padding: 4px 8px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-edit { color: #2563eb; background: #eff6ff; }
+        .btn-delete { color: #dc2626; background: #fef2f2; }
+        .category-chip { display: inline-block; padding: 2px 8px; background: #f1f5f9; border-radius: 12px; font-size: 10px; margin: 1px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+    <nav class="bg-blue-900 text-white p-4 sticky top-0 z-50">
+        <div class="max-w-[1800px] mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-extrabold tracking-tighter uppercase">Experiential <span class="text-blue-400">Holidays</span></h1>
+            <div id="auth-section" class="flex items-center gap-6">
+                <button id="login-btn" class="bg-white text-blue-900 px-6 py-2 rounded-lg font-bold">Sign In with Google</button>
+                <div id="user-profile" class="hidden flex items-center gap-4">
+                    <span id="user-email" class="text-sm border-r border-blue-700 pr-4"></span>
+                    <a href="index.html" class="text-sm font-bold bg-blue-700 px-4 py-2 rounded hover:bg-blue-600 transition">Submit New</a>
+                    <button id="logout-btn" class="text-xs font-bold text-blue-300 hover:text-white uppercase">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="main-content" class="hidden max-w-[1800px] mx-auto p-6 space-y-4">
+        <h2 id="dashboard-title" class="text-2xl font-black text-slate-800 uppercase">My Submitted Experiences</h2>
+        <div class="data-table-container">
+            <table class="mgmt-table">
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Categories</th>
+                        <th>Organization</th>
+                        <th>Host Email</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Data loads here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, query, where, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // ---- CHANGE THIS EMAIL TO THE OWNER'S GOOGLE ACCOUNT ----
+        const ADMIN_EMAIL = "your-email@gmail.com"; 
+        // ---------------------------------------------------------
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAY2ipuHLEq40P-mkN0NaPvZVDrum4NoIs",
+            authDomain: "submit-a.firebaseapp.com",
+            projectId: "submit-a",
+            storageBucket: "submit-a.firebasestorage.app",
+            messagingSenderId: "488916289105",
+            appId: "1:488916289105:web:ea80aae58690bd09465a70"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-btn').classList.add('hidden');
+                document.getElementById('user-profile').classList.remove('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                document.getElementById('user-email').innerText = user.email;
+                loadData(user.email);
+            } else {
+                document.getElementById('login-btn').classList.remove('hidden');
+                document.getElementById('user-profile').classList.add('hidden');
+                document.getElementById('main-content').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider).catch(err => alert("Login Error: " + err.message));
+        document.getElementById('logout-btn').onclick = () => signOut(auth);
+
+        function loadData(userEmail) {
+            let q;
+            
+            // Check if logged in user is the Admin
+            if (userEmail === ADMIN_EMAIL) {
+                document.getElementById('dashboard-title').innerText = "MASTER DATABASE (ADMIN VIEW)";
+                // Fetch ALL records for admin
+                q = query(collection(db, "retreats"));
+            } else {
+                // Fetch ONLY specific user's records
+                q = query(collection(db, "retreats"), where("hostEmail", "==", userEmail));
+            }
+
+            onSnapshot(q, (snap) => {
+                const body = document.getElementById('table-body');
+                body.innerHTML = "";
+                
+                // Convert to array to sort by time client-side (to avoid Firebase indexing errors)
+                let records = [];
+                snap.forEach(d => records.push({ id: d.id, ...d.data() }));
+                records.sort((a, b) => b.timestamp - a.timestamp);
+
+                records.forEach((r) => {
+                    body.innerHTML += `<tr>
+                        <td>
+                            <div class="flex gap-2">
+                                <button onclick="window.editEvent('${r.id}')" class="btn-action btn-edit">Edit</button>
+                                <button onclick="window.deleteEvent('${r.id}')" class="btn-action btn-delete">Del</button>
+                            </div>
+                        </td>
+                        <td class="font-bold">${r.retreatName}</td>
+                        <td>${r.city}, ${r.state}</td>
+                        <td>${r.startDate} to ${r.endDate}</td>
+                        <td>${(r.categories || []).map(c => `<span class="category-chip">${c}</span>`).join('')}</td>
+                        <td>${r.contactName}</td>
+                        <td>${r.hostEmail}</td>
+                    </tr>`;
+                });
+
+                if(records.length === 0) {
+                    body.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">No experiences found.</td></tr>`;
+                }
+            });
+        }
+
+        // Sends user to index.html with the ID in the URL to trigger editing
+        window.editEvent = (id) => {
+            window.location.href = `index.html?editId=${id}`;
+        };
+
+        window.deleteEvent = async (id) => {
+            if(confirm("Permanently delete this experience?")) {
+                await deleteDoc(doc(db, "retreats", id));
+            }
+        };
+    </script>
+</body>
+</html>
