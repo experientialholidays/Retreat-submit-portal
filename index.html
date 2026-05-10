@@ -79,7 +79,9 @@
 
                 <div class="md:col-span-2">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Select Categories *</label>
-                    <div id="category-list" class="grid grid-cols-3 md:grid-cols-5 gap-2 p-3 bg-slate-50 rounded-xl border-2 border-slate-100 h-32 overflow-y-auto"></div>
+                    <!-- RESPONSIVE LAYOUT: 1 col on mobile, grid on larger screens -->
+                    <div id="category-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 p-3 bg-slate-50 rounded-xl border-2 border-slate-100 h-48 overflow-y-auto"></div>
+                    <input type="text" id="otherCategory" class="hidden mt-2 w-full bg-white border-2 border-blue-100 p-2 rounded-lg text-sm outline-none" placeholder="Enter custom category...">
                 </div>
 
                 <div class="md:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -89,11 +91,13 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contribution</label>
-                        <textarea id="contribution" rows="4" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-sm"></textarea>
+                        <!-- REDUCED SPACE -->
+                        <textarea id="contribution" rows="2" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-sm"></textarea>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Inclusions & Exclusions</label>
-                        <textarea id="inclusionsExclusions" rows="4" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-sm"></textarea>
+                        <!-- REDUCED SPACE -->
+                        <textarea id="inclusionsExclusions" rows="2" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-sm"></textarea>
                     </div>
                 </div>
 
@@ -116,11 +120,16 @@
                         <input type="text" id="contactName" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl outline-none" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">WhatsApp *</label>
-                        <input type="tel" id="contactWhatsApp" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl outline-none" required>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">WhatsApp Number *</label>
+                        <!-- TWO SUB INPUTS FOR WHATSAPP -->
+                        <div class="flex gap-2">
+                            <input type="text" id="countryCode" class="w-16 bg-slate-50 border-2 border-slate-100 p-3 rounded-xl outline-none" placeholder="+91" value="+91">
+                            <input type="tel" id="contactWhatsApp" class="flex-1 bg-slate-50 border-2 border-slate-100 p-3 rounded-xl outline-none" placeholder="Number" required>
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Org Email *</label>
+                        <!-- CHANGED TO CONTACT EMAIL -->
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contact Email *</label>
                         <input type="email" id="orgContactEmail" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl outline-none" required>
                     </div>
                 </div>
@@ -174,7 +183,8 @@
         const storage = getStorage(app);
         const provider = new GoogleAuthProvider();
 
-        const ALL_CATEGORIES = ["Wellness & Healing", "Mental Health", "Spirituality", "Fitness", "Adventure", "Nature", "Leadership", "Technology", "Arts", "Culture", "Luxury", "Identity", "Education", "Food & Culinary", "Community"];
+        // CATEGORY LIST UPDATED WITH 'OTHERS'
+        const ALL_CATEGORIES = ["Wellness & Healing", "Mental Health", "Spirituality", "Fitness", "Adventure", "Nature", "Leadership", "Technology", "Arts", "Culture", "Luxury", "Identity", "Education", "Food & Culinary", "Community", "Others"];
         const STATES = ["Andaman and Nicobar", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "D&N Haveli & Daman Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "JK", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "MP", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "TN", "Telangana", "Tripura", "UP", "Uttarakhand", "West Bengal"];
 
         // Initialization
@@ -184,9 +194,18 @@
         const catList = document.getElementById('category-list');
         ALL_CATEGORIES.forEach(c => {
             catList.innerHTML += `<label class="flex items-center gap-2 text-xs bg-white p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50">
-                <input type="checkbox" name="cat" value="${c}" class="rounded"> ${c}
+                <input type="checkbox" name="cat" value="${c}" class="rounded" onchange="toggleOtherInput(this)"> ${c}
             </label>`;
         });
+
+        // Toggle custom input for 'Others'
+        window.toggleOtherInput = (cb) => {
+            const otherInput = document.getElementById('otherCategory');
+            if(cb.value === 'Others') {
+                otherInput.classList.toggle('hidden', !cb.checked);
+                if(cb.checked) otherInput.focus();
+            }
+        };
 
         // Auth
         onAuthStateChanged(auth, (user) => {
@@ -223,9 +242,17 @@
                     fileUrls.push(await getDownloadURL(snap.ref));
                 }
 
+                // Collect categories and handle "Others"
+                let selectedCats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value);
+                if(selectedCats.includes('Others')) {
+                    const customCat = document.getElementById('otherCategory').value;
+                    if(customCat) selectedCats.push(customCat);
+                    selectedCats = selectedCats.filter(c => c !== 'Others');
+                }
+
                 const data = {
                     retreatName: document.getElementById('retreatName').value,
-                    hostEmail: auth.currentUser.email, // Backend capture
+                    hostEmail: auth.currentUser.email,
                     state: document.getElementById('state').value,
                     city: document.getElementById('city').value,
                     startDate: document.getElementById('startDate').value,
@@ -233,13 +260,13 @@
                     endDate: document.getElementById('endDate').value,
                     endTime: document.getElementById('endTime').value,
                     description: document.getElementById('description').value,
-                    categories: Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value),
+                    categories: selectedCats,
                     contribution: document.getElementById('contribution').value,
                     inclusionsExclusions: document.getElementById('inclusionsExclusions').value,
                     youtubeLink: document.getElementById('youtubeLink').value,
                     orgInfo: document.getElementById('orgInfo').value,
                     contactName: document.getElementById('contactName').value,
-                    contactWhatsApp: document.getElementById('contactWhatsApp').value,
+                    contactWhatsApp: document.getElementById('countryCode').value + document.getElementById('contactWhatsApp').value,
                     orgContactEmail: document.getElementById('orgContactEmail').value,
                     timestamp: Date.now()
                 };
@@ -297,7 +324,7 @@
             const filters = table.querySelectorAll('.excel-filter');
 
             filters.forEach((select, index) => {
-                const colIndex = index + 1; // +1 because index 0 is Actions
+                const colIndex = index + 1;
                 const uniqueValues = new Set();
                 rows.forEach(row => {
                     const val = row.cells[colIndex].innerText.split('\n')[0].trim();
@@ -317,15 +344,11 @@
             rows.forEach(row => {
                 const cellText = row.cells[colIndex].innerText.toLowerCase();
                 const filterText = value.toLowerCase();
-                
-                // Show row only if it matches the selected filter
                 if (filterText === "" || cellText.includes(filterText)) {
                     row.setAttribute('data-filter-' + colIndex, 'match');
                 } else {
                     row.setAttribute('data-filter-' + colIndex, 'nomatch');
                 }
-
-                // Final check: row must match all active filters
                 let isVisible = true;
                 for(let i=1; i<=7; i++) {
                     if(row.getAttribute('data-filter-' + i) === 'nomatch') isVisible = false;
@@ -351,7 +374,15 @@
             document.getElementById('youtubeLink').value = r.youtubeLink || "";
             document.getElementById('orgInfo').value = r.orgInfo;
             document.getElementById('contactName').value = r.contactName;
-            document.getElementById('contactWhatsApp').value = r.contactWhatsApp;
+            
+            // Handle WhatsApp loading (assuming country code is 2 or 3 chars)
+            if(r.contactWhatsApp.startsWith('+')) {
+                document.getElementById('countryCode').value = r.contactWhatsApp.substring(0, 3);
+                document.getElementById('contactWhatsApp').value = r.contactWhatsApp.substring(3);
+            } else {
+                document.getElementById('contactWhatsApp').value = r.contactWhatsApp;
+            }
+
             document.getElementById('orgContactEmail').value = r.orgContactEmail;
 
             document.querySelectorAll('input[name="cat"]').forEach(cb => {
