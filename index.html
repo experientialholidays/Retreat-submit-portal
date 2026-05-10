@@ -70,18 +70,18 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">End Date & Time</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">End Date & Time *</label>
                     <div class="flex gap-2">
-                        <input type="date" id="endDate" class="w-full bg-slate-50 border-2 border-slate-100 p-2 rounded-lg text-sm">
+                        <!-- END DATE IS NOW COMPULSORY -->
+                        <input type="date" id="endDate" class="w-full bg-slate-50 border-2 border-slate-100 p-2 rounded-lg text-sm" required>
                         <input type="time" id="endTime" class="w-full bg-slate-50 border-2 border-slate-100 p-2 rounded-lg text-sm">
                     </div>
                 </div>
 
                 <div class="md:col-span-2">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Select Categories *</label>
-                    <!-- RESPONSIVE LAYOUT: 1 col on mobile, grid on larger screens -->
                     <div id="category-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 p-3 bg-slate-50 rounded-xl border-2 border-slate-100 h-48 overflow-y-auto"></div>
-                    <input type="text" id="otherCategory" class="hidden mt-2 w-full bg-white border-2 border-blue-100 p-2 rounded-lg text-sm outline-none" placeholder="Enter custom category...">
+                    <input type="text" id="otherCategory" class="hidden mt-2 w-full bg-white border-2 border-blue-100 p-2 rounded-lg text-sm outline-none" placeholder="Write your category...">
                 </div>
 
                 <div class="md:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -91,12 +91,10 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contribution</label>
-                        <!-- REDUCED SPACE -->
                         <textarea id="contribution" rows="2" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-sm"></textarea>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Inclusions & Exclusions</label>
-                        <!-- REDUCED SPACE -->
                         <textarea id="inclusionsExclusions" rows="2" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-sm"></textarea>
                     </div>
                 </div>
@@ -106,8 +104,9 @@
                     <input type="url" id="youtubeLink" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl outline-none" placeholder="https://youtube.com/watch?v=...">
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Image Upload (Select multiple)</label>
-                    <input type="file" id="fileUpload" multiple accept="image/*" class="w-full p-2 bg-slate-100 rounded-xl text-xs">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Upload (Images, PDF, Video | Max 5 files, 10MB each)</label>
+                    <input type="file" id="fileUpload" multiple accept="image/*,application/pdf,video/*" class="w-full p-2 bg-slate-100 rounded-xl text-xs">
+                    <div id="file-name-display" class="mt-2 flex flex-wrap gap-2"></div>
                 </div>
 
                 <div class="md:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
@@ -121,14 +120,12 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">WhatsApp Number *</label>
-                        <!-- TWO SUB INPUTS FOR WHATSAPP -->
                         <div class="flex gap-2">
                             <input type="text" id="countryCode" class="w-16 bg-slate-50 border-2 border-slate-100 p-3 rounded-xl outline-none" placeholder="+91" value="+91">
                             <input type="tel" id="contactWhatsApp" class="flex-1 bg-slate-50 border-2 border-slate-100 p-3 rounded-xl outline-none" placeholder="Number" required>
                         </div>
                     </div>
                     <div>
-                        <!-- CHANGED TO CONTACT EMAIL -->
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contact Email *</label>
                         <input type="email" id="orgContactEmail" class="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl outline-none" required>
                     </div>
@@ -168,7 +165,6 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        // CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyAY2ipuHLEq40P-mkN0NaPvZVDrum4NoIs",
             authDomain: "submit-a.firebaseapp.com",
@@ -183,11 +179,18 @@
         const storage = getStorage(app);
         const provider = new GoogleAuthProvider();
 
-        // CATEGORY LIST UPDATED WITH 'OTHERS'
-        const ALL_CATEGORIES = ["Wellness & Healing", "Mental Health", "Spirituality", "Fitness", "Adventure", "Nature", "Leadership", "Technology", "Arts", "Culture", "Luxury", "Identity", "Education", "Food & Culinary", "Community", "Others"];
+        // UPDATED CATEGORY LIST
+        const ALL_CATEGORIES = [
+            "Wellness & Healing", "Mental Health & Emotional Growth", "Spirituality & Consciousness", 
+            "Fitness, Movement & Martial Arts", "Adventure & Outdoor Exploration", 
+            "Nature, Sustainability & Eco Living", "Leadership, Business & Career", 
+            "Technology & Innovation", "Creativity & Arts", "Relationships & Connection", 
+            "Culture, Philosophy & Learning", "Lifestyle & Personal Transformation", 
+            "Luxury, Leisure & Travel", "Identity & Belonging", "Other"
+        ];
+        
         const STATES = ["Andaman and Nicobar", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "D&N Haveli & Daman Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "JK", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "MP", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "TN", "Telangana", "Tripura", "UP", "Uttarakhand", "West Bengal"];
 
-        // Initialization
         const stateSelect = document.getElementById('state');
         STATES.forEach(s => stateSelect.innerHTML += `<option value="${s}">${s}</option>`);
         
@@ -198,16 +201,37 @@
             </label>`;
         });
 
-        // Toggle custom input for 'Others'
         window.toggleOtherInput = (cb) => {
             const otherInput = document.getElementById('otherCategory');
-            if(cb.value === 'Others') {
+            if(cb.value === 'Other') {
                 otherInput.classList.toggle('hidden', !cb.checked);
                 if(cb.checked) otherInput.focus();
             }
         };
 
-        // Auth
+        // FILE SELECTION LISTENER (Display names and validate)
+        document.getElementById('fileUpload').onchange = function() {
+            const display = document.getElementById('file-name-display');
+            display.innerHTML = "";
+            const files = this.files;
+
+            if(files.length > 5) {
+                alert("You can only upload a maximum of 5 files.");
+                this.value = "";
+                return;
+            }
+
+            for(let f of files) {
+                if(f.size > 10 * 1024 * 1024) {
+                    alert(`File ${f.name} is too large. Max size is 10MB.`);
+                    this.value = "";
+                    display.innerHTML = "";
+                    return;
+                }
+                display.innerHTML += `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded-md font-semibold">${f.name}</span>`;
+            }
+        };
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-btn').classList.add('hidden');
@@ -225,12 +249,17 @@
         document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-        // Save Data
         document.getElementById('submit-btn').onclick = async () => {
             const editId = document.getElementById('editingId').value;
             const btn = document.getElementById('submit-btn');
             const files = document.getElementById('fileUpload').files;
             
+            // Basic validation for required fields
+            if(!document.getElementById('retreatName').value || !document.getElementById('endDate').value) {
+                alert("Please fill all required fields, including the End Date.");
+                return;
+            }
+
             btn.innerText = "UPLOADING DATA...";
             btn.disabled = true;
 
@@ -242,12 +271,11 @@
                     fileUrls.push(await getDownloadURL(snap.ref));
                 }
 
-                // Collect categories and handle "Others"
                 let selectedCats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value);
-                if(selectedCats.includes('Others')) {
+                if(selectedCats.includes('Other')) {
                     const customCat = document.getElementById('otherCategory').value;
                     if(customCat) selectedCats.push(customCat);
-                    selectedCats = selectedCats.filter(c => c !== 'Others');
+                    selectedCats = selectedCats.filter(c => c !== 'Other');
                 }
 
                 const data = {
@@ -286,7 +314,6 @@
             }
         };
 
-        // Load Data
         function loadData() {
             const q = query(collection(db, "retreats"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
@@ -294,108 +321,4 @@
                 body.innerHTML = "";
                 snapshot.forEach((snap) => {
                     const r = snap.data();
-                    const cats = r.categories ? r.categories.map(c => `<span class="category-chip">${c}</span>`).join('') : '';
-                    
-                    body.innerHTML += `
-                        <tr>
-                            <td>
-                                <div class="flex gap-2">
-                                    <button onclick="editEvent('${snap.id}')" class="btn-action btn-edit">Edit</button>
-                                    <button onclick="deleteEvent('${snap.id}')" class="btn-action btn-delete">Del</button>
-                                </div>
-                            </td>
-                            <td class="font-bold text-slate-900">${r.retreatName}</td>
-                            <td>${r.city}, ${r.state}</td>
-                            <td>${r.startDate}</td>
-                            <td>${cats}</td>
-                            <td>${r.contactName}<br><span class="text-[10px]">${r.orgContactEmail}</span></td>
-                            <td>${r.fileUrls ? '📸 '+r.fileUrls.length : ''} ${r.youtubeLink ? '🎥 YT' : ''}</td>
-                            <td>${r.hostEmail}</td>
-                        </tr>
-                    `;
-                });
-                populateExcelFilters();
-            });
-        }
-
-        function populateExcelFilters() {
-            const table = document.getElementById('masterTable');
-            const rows = Array.from(table.querySelectorAll('tbody tr'));
-            const filters = table.querySelectorAll('.excel-filter');
-
-            filters.forEach((select, index) => {
-                const colIndex = index + 1;
-                const uniqueValues = new Set();
-                rows.forEach(row => {
-                    const val = row.cells[colIndex].innerText.split('\n')[0].trim();
-                    if(val) uniqueValues.add(val);
-                });
-
-                const currentVal = select.value;
-                select.innerHTML = '<option value="">All</option>';
-                Array.from(uniqueValues).sort().forEach(v => {
-                    select.innerHTML += `<option value="${v}" ${v === currentVal ? 'selected' : ''}>${v}</option>`;
-                });
-            });
-        }
-
-        window.applyExcelFilter = (colIndex, value) => {
-            const rows = document.querySelectorAll('#table-body tr');
-            rows.forEach(row => {
-                const cellText = row.cells[colIndex].innerText.toLowerCase();
-                const filterText = value.toLowerCase();
-                if (filterText === "" || cellText.includes(filterText)) {
-                    row.setAttribute('data-filter-' + colIndex, 'match');
-                } else {
-                    row.setAttribute('data-filter-' + colIndex, 'nomatch');
-                }
-                let isVisible = true;
-                for(let i=1; i<=7; i++) {
-                    if(row.getAttribute('data-filter-' + i) === 'nomatch') isVisible = false;
-                }
-                row.style.display = isVisible ? "" : "none";
-            });
-        };
-
-        window.editEvent = async (id) => {
-            const d = await getDoc(doc(db, "retreats", id));
-            const r = d.data();
-            document.getElementById('editingId').value = id;
-            document.getElementById('retreatName').value = r.retreatName;
-            document.getElementById('state').value = r.state;
-            document.getElementById('city').value = r.city;
-            document.getElementById('startDate').value = r.startDate;
-            document.getElementById('startTime').value = r.startTime;
-            document.getElementById('endDate').value = r.endDate;
-            document.getElementById('endTime').value = r.endTime;
-            document.getElementById('description').value = r.description;
-            document.getElementById('contribution').value = r.contribution || "";
-            document.getElementById('inclusionsExclusions').value = r.inclusionsExclusions || "";
-            document.getElementById('youtubeLink').value = r.youtubeLink || "";
-            document.getElementById('orgInfo').value = r.orgInfo;
-            document.getElementById('contactName').value = r.contactName;
-            
-            // Handle WhatsApp loading (assuming country code is 2 or 3 chars)
-            if(r.contactWhatsApp.startsWith('+')) {
-                document.getElementById('countryCode').value = r.contactWhatsApp.substring(0, 3);
-                document.getElementById('contactWhatsApp').value = r.contactWhatsApp.substring(3);
-            } else {
-                document.getElementById('contactWhatsApp').value = r.contactWhatsApp;
-            }
-
-            document.getElementById('orgContactEmail').value = r.orgContactEmail;
-
-            document.querySelectorAll('input[name="cat"]').forEach(cb => {
-                cb.checked = r.categories.includes(cb.value);
-            });
-
-            document.getElementById('form-title').innerText = "Editing: " + r.retreatName;
-            document.getElementById('cancel-edit').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        };
-
-        window.deleteEvent = (id) => confirm("Permanently delete this event?") && deleteDoc(doc(db, "retreats", id));
-        document.getElementById('cancel-edit').onclick = () => location.reload();
-    </script>
-</body>
-</html>
+                    const cats = r.ca
