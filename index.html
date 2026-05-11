@@ -1,35 +1,50 @@
+I've adjusted the font size, updated the title, and softened the color palette to that light peach tone you requested. I also swapped the heavy blacks for a softer charcoal to keep the UI easy on the eyes.
+### **Changes Made:**
+ 1. **Font Size:** Increased the base font size to **17px** (approx +1pt).
+ 2. **Color Palette:** Replaced the dark navigation and blue buttons with a **smooth light peach (#ffeadb)**.
+ 3. **Title Update:** Changed the page title and header from "Manage Case" to **"Submit an Experience"**.
+ 4. **Contrast Tuning:** Changed the text colors from pure black to a softer **Slate-700/800** for better readability against the peach.
+### **Updated Code: index.html**
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Case</title>
+    <title>Submit an Experience</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; color: #1e293b; }
-        .form-section { background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; margin-bottom: 24px; }
-        .input-label { display: block; text-transform: uppercase; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; letter-spacing: 0.025em; }
-        .custom-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; outline: none; transition: 0.2s; font-size: 14px; }
-        .custom-input:focus { border-color: #94a3b8; background: #ffffff; box-shadow: 0 0 0 2px rgba(226, 232, 240, 0.5); }
-        /* Softer Button Styles */
-        .btn-primary { background: #334155; color: white; padding: 14px; border-radius: 12px; font-weight: 600; transition: 0.3s; width: 100%; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-primary:hover { background: #0f172a; }
-        .btn-soft { background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; transition: 0.2s; }
-        .btn-soft:hover { background: #e2e8f0; color: #1e293b; }
+        /* Increased base font by 1pt (17px) and softened black text */
+        body { font-family: 'Inter', sans-serif; color: #334155; font-size: 17px; }
+        
+        .form-section { background: white; border-radius: 16px; padding: 24px; border: 1px solid #f1f5f9; margin-bottom: 24px; }
+        .input-label { display: block; text-transform: uppercase; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 6px; letter-spacing: 0.025em; }
+        .custom-input { width: 100%; background: #fdfdfd; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; outline: none; transition: 0.2s; font-size: 15px; }
+        .custom-input:focus { border-color: #ffeadb; background: #ffffff; box-shadow: 0 0 0 2px rgba(255, 234, 219, 0.5); }
+        
+        /* Peach Theme */
+        .bg-peach { background-color: #ffeadb; }
+        .text-peach-dark { color: #855d48; }
+        
+        .btn-primary { background: #ffeadb; color: #855d48; padding: 14px; border-radius: 12px; font-weight: 700; transition: 0.3s; width: 100%; text-transform: uppercase; letter-spacing: 1px; border: 1px solid #f5d6c4; }
+        .btn-primary:hover { background: #f5d6c4; }
+        
+        .btn-soft { background: #f8fafc; color: #64748b; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; transition: 0.2s; border: 1px solid #e2e8f0; }
+        .btn-soft:hover { background: #ffeadb; color: #855d48; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
 
-    <nav class="bg-slate-900 text-white p-4 sticky top-0 z-50">
+    <nav class="bg-peach text-peach-dark p-4 sticky top-0 z-50 shadow-sm border-b border-[#f5d6c4]">
         <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <h1 class="text-lg font-bold tracking-tight uppercase">Experiential <span class="text-blue-400">Holidays</span></h1>
+            <h1 class="text-xl font-bold tracking-tight uppercase">Experiential <span class="opacity-70">Holidays</span></h1>
             <div id="auth-section" class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-                <button id="login-btn" class="bg-white text-slate-900 px-5 py-1.5 rounded-md font-bold text-sm">Sign In</button>
+                <button id="login-btn" class="bg-white text-peach-dark px-5 py-1.5 rounded-md font-bold text-sm border border-[#f5d6c4]">Sign In</button>
                 <div id="user-profile" class="hidden flex flex-col md:flex-row items-center gap-3">
-                    <span id="user-email" class="text-slate-300 text-xs md:border-r md:border-slate-700 md:pr-3"></span>
-                    <a href="dashboard.html" class="text-blue-400 hover:text-blue-300 font-medium text-sm">My Dashboard</a>
-                    <button id="logout-btn" class="text-slate-400 hover:text-white text-[10px] uppercase font-bold">Logout</button>
+                    <span id="user-email" class="text-peach-dark font-medium text-sm md:border-r md:border-[#f5d6c4] md:pr-3"></span>
+                    <a href="dashboard.html" class="text-peach-dark hover:opacity-70 font-bold text-sm">My Dashboard</a>
+                    <button id="logout-btn" class="text-peach-dark opacity-60 hover:opacity-100 text-[11px] uppercase font-bold">Logout</button>
                 </div>
             </div>
         </div>
@@ -38,7 +53,7 @@
     <div id="main-content" class="hidden max-w-[1000px] mx-auto p-4 md:p-8">
         <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
-                <h2 id="form-title" class="text-2xl font-bold text-slate-800 uppercase tracking-tight">Manage Case</h2>
+                <h2 id="form-title" class="text-2xl font-bold text-slate-800 uppercase tracking-tight">Submit an Experience</h2>
                 <p class="text-slate-500 text-sm">Organize and publish your holiday experience details.</p>
             </div>
             <a href="index.html" id="cancel-edit" class="hidden text-red-500 text-xs font-bold uppercase tracking-widest border border-red-100 px-3 py-1 rounded">Discard Changes</a>
@@ -46,9 +61,10 @@
 
         <input type="hidden" id="editingId">
 
+        <!-- 01 BASIC DETAILS -->
         <div class="form-section shadow-sm">
-            <h3 class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <span class="w-5 h-5 rounded bg-blue-50 flex items-center justify-center text-[10px]">01</span> Basic Details
+            <h3 class="text-xs font-bold text-orange-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <span class="w-5 h-5 rounded bg-orange-50 flex items-center justify-center text-[10px]">01</span> Basic Details
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="md:col-span-2">
@@ -80,9 +96,10 @@
             </div>
         </div>
 
+        <!-- 02 DETAILED INFORMATION -->
         <div class="form-section shadow-sm">
-            <h3 class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <span class="w-5 h-5 rounded bg-blue-50 flex items-center justify-center text-[10px]">02</span> Detailed Information
+            <h3 class="text-xs font-bold text-orange-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <span class="w-5 h-5 rounded bg-orange-50 flex items-center justify-center text-[10px]">02</span> Detailed Information
             </h3>
             <div class="space-y-6">
                 <div>
@@ -112,7 +129,7 @@
                     <div>
                         <label class="input-label">Media Upload (Max 10 Files, 10MB each)</label>
                         <div id="file-upload-container" class="space-y-2">
-                            <input type="file" class="file-input-item block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200" accept="image/*,application/pdf,video/*">
+                            <input type="file" class="file-input-item block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-white file:border file:border-slate-200 file:text-slate-700" accept="image/*,application/pdf,video/*">
                         </div>
                         <button type="button" id="add-file-btn" class="mt-2 btn-soft">+ Add Another File</button>
                     </div>
@@ -120,9 +137,10 @@
             </div>
         </div>
 
+        <!-- 03 CONTACT INFORMATION CENTER -->
         <div class="form-section shadow-sm">
-            <h3 class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <span class="w-5 h-5 rounded bg-blue-50 flex items-center justify-center text-[10px]">03</span> Contact Information Center
+            <h3 class="text-xs font-bold text-orange-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <span class="w-5 h-5 rounded bg-orange-50 flex items-center justify-center text-[10px]">03</span> Contact Information Center
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="md:col-span-2">
@@ -154,11 +172,10 @@
             </div>
         </div>
 
-        <button id="submit-btn" class="btn-primary mb-12 shadow-lg">Publish Experience</button>
+        <button id="submit-btn" class="btn-primary mb-12 shadow-md">Publish Experience</button>
     </div>
 
     <script type="module">
-        // Firebase initialization (Same as your provided code)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -182,14 +199,13 @@
         const ALL_CATEGORIES = ["Wellness & Healing", "Mental Health & Emotional Growth", "Spirituality & Consciousness", "Fitness, Movement & Martial Arts", "Adventure & Outdoor Exploration", "Nature, Sustainability & Eco Living", "Leadership, Business & Career", "Technology & Innovation", "Creativity & Arts", "Relationships & Connection", "Culture, Philosophy & Learning", "Lifestyle & Personal Transformation", "Luxury, Leisure & Travel", "Identity & Belonging", "Other"];
         const STATES = ["Andaman and Nicobar", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "D&N Haveli & Daman Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "JK", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "MP", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "TN", "Telangana", "Tripura", "UP", "Uttarakhand", "West Bengal"];
 
-        // Init Form Data
         const stateSelect = document.getElementById('state');
         STATES.forEach(s => stateSelect.innerHTML += `<option value="${s}">${s}</option>`);
         
         const catList = document.getElementById('category-list');
         ALL_CATEGORIES.forEach(c => {
             catList.innerHTML += `<label class="flex items-center gap-3 text-sm bg-white p-2 rounded-md border border-slate-100 cursor-pointer hover:bg-slate-50 transition">
-                <input type="checkbox" name="cat" value="${c}" class="w-4 h-4 rounded border-slate-300 text-blue-600" onchange="window.toggleOtherInput(this)"> 
+                <input type="checkbox" name="cat" value="${c}" class="w-4 h-4 rounded border-slate-300 text-orange-400" onchange="window.toggleOtherInput(this)"> 
                 <span class="text-slate-600">${c}</span>
             </label>`;
         });
@@ -202,13 +218,12 @@
             }
         };
 
-        // File/Link Adders
         document.getElementById('add-file-btn').onclick = () => {
             const container = document.getElementById('file-upload-container');
             if (container.querySelectorAll('input').length < 10) {
                 const input = document.createElement('input');
                 input.type = 'file';
-                input.className = "file-input-item block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 mt-2";
+                input.className = "file-input-item block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-white file:border file:border-slate-200 file:text-slate-700 mt-2";
                 container.appendChild(input);
             }
         };
@@ -224,7 +239,6 @@
             }
         };
 
-        // Auth listeners
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('login-btn').classList.add('hidden');
@@ -244,7 +258,6 @@
         document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-        // Edit Mode
         async function loadEditData(id) {
             const r = (await getDoc(doc(db, "retreats", id))).data();
             if(!r) return;
@@ -255,17 +268,15 @@
             document.getElementById('startDate').value = r.startDate;
             document.getElementById('endDate').value = r.endDate;
             document.getElementById('description').value = r.description;
-            document.getElementById('form-title').innerText = "Update Case";
+            document.getElementById('form-title').innerText = "Update Experience";
             document.getElementById('cancel-edit').classList.remove('hidden');
             document.getElementById('submit-btn').innerText = "Save Changes";
         }
 
-        // Submit Action
         document.getElementById('submit-btn').onclick = async () => {
             const btn = document.getElementById('submit-btn');
             const editId = document.getElementById('editingId').value;
             btn.innerText = "PROCESSING..."; btn.disabled = true;
-
             try {
                 let fileUrls = [];
                 const fileInputs = document.querySelectorAll('.file-input-item');
@@ -276,7 +287,6 @@
                         fileUrls.push(await getDownloadURL(snap.ref));
                     }
                 }
-
                 const data = {
                     retreatName: document.getElementById('retreatName').value,
                     hostEmail: auth.currentUser.email,
@@ -298,14 +308,14 @@
                     externalLinks: Array.from(document.querySelectorAll('.external-link-input')).map(i => i.value).filter(v => v !== ""),
                     timestamp: Date.now()
                 };
-
                 if(fileUrls.length > 0) data.fileUrls = fileUrls;
                 if(editId) await updateDoc(doc(db, "retreats", editId), data);
                 else await addDoc(collection(db, "retreats"), data);
-                
                 window.location.href = "dashboard.html";
             } catch (e) { alert(e.message); btn.innerText = "Publish Experience"; btn.disabled = false; }
         };
     </script>
 </body>
-    </html>
+</html>
+
+```
