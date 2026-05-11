@@ -3,146 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Experiential Holidays | Submit</title>
+    <title>Experiential Holidays | Manage Case</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; color: #1e293b; }
-        .input-field { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; outline: none; transition: 0.2s; font-size: 14px; }
-        .input-field:focus { border-color: #94a3b8; background: #ffffff; box-shadow: 0 0 0 2px rgba(226, 232, 240, 0.5); }
-        .section-label { display: block; text-transform: uppercase; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; letter-spacing: 0.025em; }
-        .section-container { padding-top: 2rem; border-top: 1px solid #f1f5f9; margin-top: 2.5rem; }
-        .btn-primary { background: #334155; color: white; padding: 12px; border-radius: 8px; font-weight: 600; transition: 0.3s; width: 100%; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-primary:hover { background: #0f172a; }
+        .section-header { background-color: #f3f4f6; padding: 10px; font-weight: bold; margin-top: 20px; border-radius: 5px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-bold { font-weight: bold; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .add-btn { background: none; border: none; color: blue; font-weight: bold; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body class="bg-gray-100 p-4">
 
-    <nav class="bg-slate-900 text-white p-4 sticky top-0 z-50">
-        <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-lg font-bold tracking-tight uppercase">Experiential <span class="text-blue-400">Holidays</span></h1>
-            <div id="auth-section" class="flex items-center gap-4 w-full md:w-auto justify-center">
-                <button id="login-btn" class="bg-white text-slate-900 px-5 py-1.5 rounded-md font-bold text-sm">Sign In</button>
-                <div id="user-profile" class="hidden flex flex-wrap items-center justify-center gap-3 text-sm">
-                    <span id="user-email" class="text-slate-300 border-r border-slate-700 pr-3"></span>
-                    <a href="dashboard.html" class="text-blue-400 hover:text-blue-300 font-medium">My Dashboard</a>
-                    <button id="logout-btn" class="text-slate-400 hover:text-white text-xs uppercase font-bold">Logout</button>
+    <nav class="bg-blue-600 text-white p-4 mb-6 rounded shadow-lg">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <h1 class="text-2xl font-bold">Experiential Holidays</h1>
+            <div id="auth-section" class="flex flex-col md:flex-row items-center gap-4">
+                <button id="login-btn" class="bg-white text-blue-600 btn-bold">Login with Google</button>
+                <div id="user-profile" class="hidden flex flex-col md:flex-row items-center gap-4">
+                    <span id="user-email" class="font-bold"></span>
+                    <button onclick="window.location.href='dashboard.html'" class="bg-yellow-400 text-black btn-bold">My Dashboard</button>
+                    <button id="logout-btn" class="bg-red-500 text-white btn-bold">Logout</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div id="main-content" class="hidden max-w-[1000px] mx-auto p-4 md:p-8 space-y-6">
-        <div class="bg-white rounded-xl p-6 md:p-10 shadow-sm border border-slate-200">
-            <div class="flex justify-between items-center mb-10">
-                <h2 id="form-title" class="text-xl font-bold text-slate-800">Submit New Experience</h2>
-                <a href="index.html" id="cancel-edit" class="hidden text-red-500 text-xs font-bold uppercase tracking-wider">Discard Changes</a>
+    <div id="main-content" class="hidden max-w-4xl mx-auto bg-white p-8 rounded shadow">
+        <h2 id="form-title" class="text-2xl font-bold mb-6 text-center">Submit New Experience</h2>
+        <input type="hidden" id="editingId">
+
+        <!-- BASIC DETAILS SECTION -->
+        <div class="section-header">BASIC DETAILS</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div class="form-group md:col-span-2">
+                <label>Experience Title *</label>
+                <input type="text" id="retreatName" required>
             </div>
-            
-            <input type="hidden" id="editingId">
-            
-            <div class="space-y-12">
-                <!-- 1. BASIC DETAILS -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="md:col-span-2">
-                        <label class="section-label">Experience Title *</label>
-                        <input type="text" id="retreatName" class="input-field" placeholder="e.g. Wellness Journey" required>
-                    </div>
-                    <div>
-                        <label class="section-label">State/UT *</label>
-                        <select id="state" class="input-field" required></select>
-                    </div>
-                    <div>
-                        <label class="section-label">City (Nearest City) *</label>
-                        <input type="text" id="city" class="input-field" required>
-                    </div>
-                    <div>
-                        <label class="section-label">Start Date & Time *</label>
-                        <div class="flex gap-2">
-                            <input type="date" id="startDate" class="input-field" required>
-                            <input type="time" id="startTime" class="input-field">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="section-label">End Date & Time *</label>
-                        <div class="flex gap-2">
-                            <input type="date" id="endDate" class="input-field" required>
-                            <input type="time" id="endTime" class="input-field">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. EXPERIENCE DETAILS -->
-                <div class="section-container space-y-6">
-                    <div>
-                        <label class="section-label">Pick Multiple Categories *</label>
-                        <div id="category-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 p-4 bg-slate-50 rounded-lg border border-slate-200 h-40 overflow-y-auto"></div>
-                        <input type="text" id="otherCategory" class="hidden mt-2 input-field border-blue-100" placeholder="Type custom category...">
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="md:col-span-2">
-                            <label class="section-label">General Description *</label>
-                            <textarea id="description" rows="4" class="input-field" required></textarea>
-                        </div>
-                        <div>
-                            <label class="section-label">Contribution</label>
-                            <textarea id="contribution" rows="3" class="input-field"></textarea>
-                        </div>
-                        <div>
-                            <label class="section-label">Inclusions & Exclusions</label>
-                            <textarea id="inclusionsExclusions" rows="3" class="input-field"></textarea>
-                        </div>
-                        <div>
-                            <label class="section-label">YouTube Link</label>
-                            <input type="url" id="youtubeLink" class="input-field" placeholder="https://youtube.com/...">
-                        </div>
-                        <div>
-                            <label class="section-label">Media Upload (Max 5 files, 10MB each)</label>
-                            <input type="file" id="fileUpload" multiple accept="image/*,application/pdf,video/*" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer w-full">
-                            <div id="file-name-display" class="mt-2 flex flex-wrap gap-2"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. CONTACT INFORMATION CENTER -->
-                <div class="section-container grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="md:col-span-2">
-                        <label class="section-label">Organization Name (with brief Bio) *</label>
-                        <textarea id="orgInfo" rows="3" class="input-field" required></textarea>
-                    </div>
-                    <div>
-                        <label class="section-label">Contact Person Name *</label>
-                        <input type="text" id="contactName" class="input-field" required>
-                    </div>
-                    <div>
-                        <label class="section-label">Contact Email *</label>
-                        <input type="email" id="orgContactEmail" class="input-field" required>
-                    </div>
-                    <div class="md:col-span-1">
-                        <label class="section-label">WhatsApp Number *</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="countryCode" class="w-20 input-field text-center" value="+91">
-                            <input type="tel" id="contactWhatsApp" class="flex-1 input-field" placeholder="Number" required>
-                        </div>
-                    </div>
-
-                    <div class="md:col-span-2 space-y-3 pt-4">
-                        <label class="section-label">External Links (Social Media, Web, etc. | Max 5)</label>
-                        <div id="external-links-container" class="space-y-2">
-                            <input type="url" class="external-link-input input-field" placeholder="https://...">
-                        </div>
-                        <button type="button" id="add-link-btn" class="text-blue-500 text-xs font-medium hover:text-blue-700 transition">+ Add another link</button>
-                    </div>
+            <div class="form-group">
+                <label>State/UT *</label>
+                <select id="state" required></select>
+            </div>
+            <div class="form-group">
+                <label>City (Nearest City) *</label>
+                <input type="text" id="city" required>
+            </div>
+            <div class="form-group">
+                <label>Start Date & Time *</label>
+                <div class="flex gap-2">
+                    <input type="date" id="startDate" required>
+                    <input type="time" id="startTime">
                 </div>
             </div>
-
-            <button id="submit-btn" class="btn-primary mt-12">Publish Experience</button>
+            <div class="form-group">
+                <label>End Date & Time *</label>
+                <div class="flex gap-2">
+                    <input type="date" id="endDate" required>
+                    <input type="time" id="endTime">
+                </div>
+            </div>
         </div>
+
+        <!-- EXPERIENCE DETAILS SECTION -->
+        <div class="section-header">EXPERIENCE DETAILS</div>
+        <div class="mt-4 space-y-4">
+            <div class="form-group">
+                <label>Pick Multiple Categories *</label>
+                <div id="category-list" class="grid grid-cols-2 md:grid-cols-3 gap-2 border p-3 rounded bg-gray-50 h-40 overflow-y-auto"></div>
+                <input type="text" id="otherCategory" class="hidden mt-2" placeholder="Enter custom category">
+            </div>
+            <div class="form-group">
+                <label>General Description *</label>
+                <textarea id="description" rows="4" required></textarea>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-group">
+                    <label>Contribution</label>
+                    <textarea id="contribution" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Inclusions & Exclusions</label>
+                    <textarea id="inclusionsExclusions" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>YouTube Link</label>
+                <input type="url" id="youtubeLink" placeholder="https://youtube.com/watch?v=...">
+            </div>
+            <div class="form-group">
+                <label>Media Upload (Max 5 files, 10MB each)</label>
+                <input type="file" id="fileUpload" multiple accept="image/*,application/pdf,video/*">
+                <div id="file-name-display" class="text-sm text-gray-600 mt-1"></div>
+            </div>
+        </div>
+
+        <!-- CONTACT INFORMATION CENTER -->
+        <div class="section-header">CONTACT INFORMATION CENTER</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div class="form-group md:col-span-2">
+                <label>Organization Name (with brief Bio) *</label>
+                <textarea id="orgInfo" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Contact Person Name *</label>
+                <input type="text" id="contactName" required>
+            </div>
+            <div class="form-group">
+                <label>Contact Email *</label>
+                <input type="email" id="orgContactEmail" required>
+            </div>
+            <div class="form-group">
+                <label>WhatsApp Number *</label>
+                <div class="flex gap-2">
+                    <input type="text" id="countryCode" value="+91" class="w-16 text-center">
+                    <input type="tel" id="contactWhatsApp" required>
+                </div>
+            </div>
+            <div class="form-group md:col-span-2">
+                <label>External Links (Social Media, Web, etc. | Max 5)</label>
+                <div id="external-links-container" class="space-y-2">
+                    <input type="url" class="external-link-input" placeholder="https://">
+                </div>
+                <button type="button" id="add-link-btn" class="add-btn">+ Add another link</button>
+            </div>
+        </div>
+
+        <button id="submit-btn" class="w-full bg-green-600 text-white btn-bold text-xl mt-8">Publish Experience</button>
     </div>
 
     <script type="module">
-        // [Firebase setup remains exactly the same as previously established to keep core logic intact]
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -163,7 +153,6 @@
         const storage = getStorage(app);
         const provider = new GoogleAuthProvider();
 
-        // 15 Categories & State List
         const ALL_CATEGORIES = ["Wellness & Healing", "Mental Health & Emotional Growth", "Spirituality & Consciousness", "Fitness, Movement & Martial Arts", "Adventure & Outdoor Exploration", "Nature, Sustainability & Eco Living", "Leadership, Business & Career", "Technology & Innovation", "Creativity & Arts", "Relationships & Connection", "Culture, Philosophy & Learning", "Lifestyle & Personal Transformation", "Luxury, Leisure & Travel", "Identity & Belonging", "Other"];
         const STATES = ["Andaman and Nicobar", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "D&N Haveli & Daman Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "JK", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "MP", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "TN", "Telangana", "Tripura", "UP", "Uttarakhand", "West Bengal"];
 
@@ -172,32 +161,24 @@
         
         const catList = document.getElementById('category-list');
         ALL_CATEGORIES.forEach(c => {
-            catList.innerHTML += `<label class="flex items-center gap-2 text-xs p-1 cursor-pointer hover:text-blue-600 transition">
-                <input type="checkbox" name="cat" value="${c}" class="rounded border-slate-300" onchange="window.toggleOtherInput(this)"> ${c}
-            </label>`;
+            catList.innerHTML += `<label class="flex items-center gap-2 text-sm"><input type="checkbox" name="cat" value="${c}" onchange="window.toggleOther(this)"> ${c}</label>`;
         });
 
-        window.toggleOtherInput = (cb) => {
-            const otherInput = document.getElementById('otherCategory');
-            if(cb.value === 'Other') {
-                otherInput.classList.toggle('hidden', !cb.checked);
-                if(cb.checked) otherInput.focus();
-            }
+        window.toggleOther = (cb) => {
+            if(cb.value === 'Other') document.getElementById('otherCategory').classList.toggle('hidden', !cb.checked);
         };
 
-        // Link management
         document.getElementById('add-link-btn').onclick = () => {
             const container = document.getElementById('external-links-container');
             if (container.querySelectorAll('input').length < 5) {
                 const input = document.createElement('input');
                 input.type = 'url';
-                input.className = 'external-link-input input-field';
-                input.placeholder = 'https://...';
+                input.className = 'external-link-input mt-2';
+                input.placeholder = 'https://';
                 container.appendChild(input);
             }
         };
 
-        // Auth listeners
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('login-btn').classList.add('hidden');
@@ -217,14 +198,23 @@
         document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-        // Core Submission Logic (Intact)
+        async function loadEditData(id) {
+            const r = (await getDoc(doc(db, "retreats", id))).data();
+            if(!r) return;
+            document.getElementById('editingId').value = id;
+            document.getElementById('retreatName').value = r.retreatName;
+            document.getElementById('state').value = r.state;
+            document.getElementById('city').value = r.city;
+            document.getElementById('startDate').value = r.startDate;
+            document.getElementById('endDate').value = r.endDate;
+            document.getElementById('description').value = r.description;
+            document.getElementById('form-title').innerText = "Edit Experience";
+            document.getElementById('submit-btn').innerText = "Update Experience";
+        }
+
         document.getElementById('submit-btn').onclick = async () => {
-            const editId = document.getElementById('editingId').value;
             const btn = document.getElementById('submit-btn');
-            if(!document.getElementById('retreatName').value || !document.getElementById('endDate').value) {
-                alert("Mandatory fields missing."); return;
-            }
-            btn.innerText = "PROCESSING..."; btn.disabled = true;
+            btn.innerText = "Processing..."; btn.disabled = true;
             try {
                 let fileUrls = [];
                 const files = document.getElementById('fileUpload').files;
@@ -233,8 +223,6 @@
                     const snap = await uploadBytes(sRef, f);
                     fileUrls.push(await getDownloadURL(snap.ref));
                 }
-                const selectedCats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value);
-                const externalLinks = Array.from(document.querySelectorAll('.external-link-input')).map(i => i.value).filter(v => v !== "");
                 const data = {
                     retreatName: document.getElementById('retreatName').value,
                     hostEmail: auth.currentUser.email,
@@ -245,7 +233,7 @@
                     endDate: document.getElementById('endDate').value,
                     endTime: document.getElementById('endTime').value,
                     description: document.getElementById('description').value,
-                    categories: selectedCats,
+                    categories: Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value),
                     contribution: document.getElementById('contribution').value,
                     inclusionsExclusions: document.getElementById('inclusionsExclusions').value,
                     youtubeLink: document.getElementById('youtubeLink').value,
@@ -253,10 +241,11 @@
                     contactName: document.getElementById('contactName').value,
                     contactWhatsApp: document.getElementById('countryCode').value + document.getElementById('contactWhatsApp').value,
                     orgContactEmail: document.getElementById('orgContactEmail').value,
-                    externalLinks: externalLinks,
+                    externalLinks: Array.from(document.querySelectorAll('.external-link-input')).map(i => i.value).filter(v => v !== ""),
                     timestamp: Date.now()
                 };
                 if(fileUrls.length > 0) data.fileUrls = fileUrls;
+                const editId = document.getElementById('editingId').value;
                 if(editId) await updateDoc(doc(db, "retreats", editId), data);
                 else await addDoc(collection(db, "retreats"), data);
                 window.location.href = "dashboard.html";
