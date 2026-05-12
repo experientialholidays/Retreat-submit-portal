@@ -3,35 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Experiential Holidays</title>
+    <title>Registry Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; color: #334155; font-size: 16px; }
         .bg-peach { background-color: #ffeadb; }
         .text-peach-dark { color: #855d48; }
-        
-        /* Table Styling */
-        .table-wrapper { background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .table-wrapper { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
         th { background: #f8fafc; padding: 12px; font-size: 11px; text-transform: uppercase; color: #64748b; border-bottom: 2px solid #edf2f7; white-space: nowrap; }
         td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; vertical-align: top; }
-        
-        /* Filter Styles */
-        .filter-select { display: block; width: 100%; margin-top: 5px; font-size: 11px; padding: 2px; border: 1px solid #cbd5e1; border-radius: 4px; color: #475569; }
-        
-        /* Action Buttons */
-        .btn-edit { color: #0284c7; font-weight: 700; font-size: 12px; border: 1px solid #e0f2fe; padding: 4px 8px; border-radius: 4px; background: #f0f9ff; }
-        .btn-delete { color: #dc2626; font-weight: 700; font-size: 12px; border: 1px solid #fee2e2; padding: 4px 8px; border-radius: 4px; background: #fef2f2; margin-left: 4px; }
-        
-        .truncate-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .scroll-cell { max-height: 60px; overflow-y: auto; font-size: 12px; line-height: 1.4; color: #64748b; }
+        .filter-select { display: block; width: 100%; margin-top: 5px; font-size: 11px; padding: 2px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .btn-edit { color: #0284c7; font-weight: 700; font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #f0f9ff; }
+        .btn-delete { color: #dc2626; font-weight: 700; font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #fef2f2; margin-left: 4px; }
+        .scroll-cell { max-height: 60px; overflow-y: auto; font-size: 12px; color: #64748b; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
 
     <nav class="bg-peach text-peach-dark p-4 sticky top-0 z-50 shadow-sm border-b border-[#f5d6c4]">
         <div class="max-w-[1600px] mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold uppercase tracking-tight">Experiential <span class="opacity-70">Dashboard</span></h1>
+            <h1 class="text-xl font-bold uppercase">Registry <span class="opacity-70">Dashboard</span></h1>
             <div id="user-profile" class="hidden flex items-center gap-4">
                 <span id="admin-badge" class="hidden bg-orange-400 text-white px-2 py-0.5 rounded text-[10px] font-bold">ADMIN</span>
                 <span id="user-email" class="font-medium text-sm border-r border-[#f5d6c4] pr-3"></span>
@@ -43,13 +35,7 @@
 
     <div id="main-content" class="hidden p-4 md:p-8">
         <div class="max-w-[1600px] mx-auto">
-            <div class="flex justify-between items-end mb-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-800 uppercase">Experience Registry</h2>
-                    <p id="view-status" class="text-slate-500 text-sm italic">Loading experiences...</p>
-                </div>
-                <button onclick="window.location.reload()" class="text-xs font-bold text-slate-400 hover:text-slate-600">Refresh Data</button>
-            </div>
+            <header class="mb-6"><h2 class="text-2xl font-bold text-slate-800 uppercase">Experience Registry</h2></header>
 
             <div class="table-wrapper overflow-x-auto">
                 <table class="w-full text-left border-collapse min-w-[2000px]">
@@ -63,34 +49,24 @@
                             <th>Date (Start - End)</th>
                             <th>Categories <select class="filter-select" data-col="categories"><option value="">All</option></select></th>
                             <th>Description</th>
-                            <th>Contribution</th>
                             <th>Contact Person</th>
-                            <th>WhatsApp</th>
                             <th>Media</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body">
-                        </tbody>
+                    <tbody id="table-body"></tbody>
                 </table>
-            </div>
-            <div id="empty-state" class="hidden text-center py-20 bg-white mt-4 rounded-xl border-2 border-dashed border-slate-200">
-                <p class="text-slate-400">No experiences found matching your filters.</p>
             </div>
         </div>
     </div>
 
-    <div id="login-prompt" class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-sm border border-slate-100 text-center">
-        <h2 class="text-xl font-bold text-slate-800 mb-6 uppercase">Dashboard Access</h2>
-        <button id="login-btn" class="w-full bg-[#ffeadb] text-[#855d48] px-5 py-3 rounded-xl font-bold uppercase tracking-widest border border-[#f5d6c4] hover:bg-[#f5d6c4] transition">Sign In with Google</button>
+    <div id="login-prompt" class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl text-center">
+        <button id="login-btn" class="w-full bg-[#ffeadb] text-[#855d48] px-5 py-3 rounded-xl font-bold border border-[#f5d6c4]">Sign In with Google</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, query, where, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // CONFIG: Add your admin emails here
-        const ADMIN_EMAILS = ["admin@example.com", "your-email@gmail.com"];
+        import { getFirestore, collection, getDocs, query, where, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAY2ipuHLEq40P-mkN0NaPvZVDrum4NoIs",
@@ -115,12 +91,12 @@
                 document.getElementById('user-profile').classList.remove('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
                 document.getElementById('user-email').innerText = user.email;
+
+                // --- SECRET ADMIN CHECK ---
+                const adminSnap = await getDoc(doc(db, "admins", user.email.toLowerCase().trim()));
+                const isAdmin = adminSnap.exists();
                 
-                const isAdmin = ADMIN_EMAILS.includes(user.email);
                 if(isAdmin) document.getElementById('admin-badge').classList.remove('hidden');
-                
-                document.getElementById('view-status').innerText = isAdmin ? "Viewing All Submissions (Admin)" : "Viewing Your Submissions";
-                
                 fetchData(user.email, isAdmin);
             } else {
                 document.getElementById('login-prompt').classList.remove('hidden');
@@ -135,109 +111,51 @@
         async function fetchData(email, isAdmin) {
             const retreatsRef = collection(db, "retreats");
             const q = isAdmin ? retreatsRef : query(retreatsRef, where("hostEmail", "==", email));
-            
-            try {
-                const snap = await getDocs(q);
-                rawData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                filteredData = [...rawData];
-                setupFilters();
-                renderTable();
-            } catch (e) { alert("Error fetching data: " + e.message); }
+            const snap = await getDocs(q);
+            rawData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            filteredData = [...rawData];
+            setupFilters();
+            renderTable();
         }
 
         function renderTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
-            
-            if(filteredData.length === 0) {
-                document.getElementById('empty-state').classList.remove('hidden');
-                return;
-            }
-            document.getElementById('empty-state').classList.add('hidden');
-
             filteredData.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors";
-                
-                // Format Multi-fields
                 const cats = Array.isArray(row.categories) ? row.categories.join(", ") : row.categories;
-                const mediaCount = (row.fileUrls?.length || 0) + (row.youtubeLink ? 1 : 0) + (row.externalLinks?.length || 0);
-
                 tr.innerHTML = `
-                    <td class="whitespace-nowrap">
-                        <button onclick="editRow('${row.id}')" class="btn-edit">Edit</button>
-                        <button onclick="deleteRow('${row.id}')" class="btn-delete">Del</button>
-                    </td>
-                    <td class="font-bold text-slate-700">${row.retreatName}</td>
-                    <td class="text-xs text-slate-400">${row.hostEmail}</td>
-                    <td>${row.state}</td>
-                    <td>${row.city}</td>
-                    <td>
-                        <div class="text-xs font-bold">${row.startDate}</div>
-                        <div class="text-[10px] text-slate-400">to ${row.endDate}</div>
-                    </td>
+                    <td><button onclick="editRow('${row.id}')" class="btn-edit">Edit</button><button onclick="deleteRow('${row.id}')" class="btn-delete">Del</button></td>
+                    <td class="font-bold">${row.retreatName}</td>
+                    <td class="text-xs">${row.hostEmail}</td>
+                    <td>${row.state}</td><td>${row.city}</td>
+                    <td class="text-xs">${row.startDate} to ${row.endDate}</td>
                     <td><div class="scroll-cell" style="width:150px">${cats}</div></td>
                     <td><div class="scroll-cell" style="width:250px">${row.description}</div></td>
-                    <td><div class="scroll-cell" style="width:150px">${row.contribution || '-'}</div></td>
-                    <td>
-                        <div class="font-medium">${row.contactName}</div>
-                        <div class="text-[10px] text-slate-400">${row.orgContactEmail}</div>
-                    </td>
-                    <td class="whitespace-nowrap font-mono text-xs">${row.contactWhatsApp || '-'}</td>
-                    <td><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">${mediaCount} Items</span></td>
+                    <td>${row.contactName}</td>
+                    <td>${(row.fileUrls?.length || 0)} Files</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
         function setupFilters() {
-            const selects = document.querySelectorAll('.filter-select');
-            selects.forEach(select => {
+            document.querySelectorAll('.filter-select').forEach(select => {
                 const col = select.getAttribute('data-col');
-                const uniqueValues = new Set();
-                
-                rawData.forEach(item => {
-                    if (col === 'categories' && Array.isArray(item[col])) {
-                        item[col].forEach(c => uniqueValues.add(c));
-                    } else if (item[col]) {
-                        uniqueValues.add(item[col]);
-                    }
-                });
-
+                const vals = new Set();
+                rawData.forEach(item => { if(item[col]) vals.add(item[col]); });
                 select.innerHTML = '<option value="">All</option>';
-                Array.from(uniqueValues).sort().forEach(val => {
-                    select.innerHTML += `<option value="${val}">${val}</option>`;
-                });
-
-                select.onchange = applyFilters;
+                Array.from(vals).sort().forEach(v => select.innerHTML += `<option value="${v}">${v}</option>`);
+                select.onchange = () => {
+                    const selects = document.querySelectorAll('.filter-select');
+                    filteredData = rawData.filter(item => Array.from(selects).every(s => !s.value || item[s.getAttribute('data-col')] == s.value));
+                    renderTable();
+                };
             });
         }
 
-        function applyFilters() {
-            const selects = document.querySelectorAll('.filter-select');
-            filteredData = rawData.filter(item => {
-                return Array.from(selects).every(select => {
-                    const val = select.value;
-                    const col = select.getAttribute('data-col');
-                    if (!val) return true;
-                    if (col === 'categories') return item[col] && item[col].includes(val);
-                    return item[col] == val;
-                });
-            });
-            renderTable();
-        }
-
-        // Global functions for buttons
-        window.editRow = (id) => {
-            window.location.href = `index.html?editId=${id}`;
-        };
-
-        window.deleteRow = async (id) => {
-            if(confirm("Permanently delete this experience?")) {
-                await deleteDoc(doc(db, "retreats", id));
-                location.reload();
-            }
-        };
+        window.editRow = (id) => window.location.href = `index.html?editId=${id}`;
+        window.deleteRow = async (id) => confirm("Delete permanently?") && (await deleteDoc(doc(db, "retreats", id)), location.reload());
     </script>
 </body>
 </html>
