@@ -3,97 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Experiences</title>
+    <title>Dashboard - Experiential Holidays</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Increased base font and softened black text */
-        body { font-family: 'Inter', sans-serif; color: #334155; font-size: 17px; }
-        
-        /* Peach Theme */
+        body { font-family: 'Inter', sans-serif; color: #334155; font-size: 16px; }
         .bg-peach { background-color: #ffeadb; }
         .text-peach-dark { color: #855d48; }
         
-        /* Table Styles */
-        .table-container { background: white; border-radius: 12px; border: 1px solid #f1f5f9; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        th { background: #f8fafc; padding: 12px 16px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
-        td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; vertical-align: top; max-width: 250px; }
-        .cell-scroll { max-height: 80px; overflow-y: auto; scrollbar-width: thin; }
+        /* Table Styling */
+        .table-wrapper { background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        th { background: #f8fafc; padding: 12px; font-size: 11px; text-transform: uppercase; color: #64748b; border-bottom: 2px solid #edf2f7; white-space: nowrap; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; vertical-align: top; }
         
-        /* Filter Dropdowns */
-        .filter-select { display: block; width: 100%; margin-top: 6px; font-size: 12px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155; outline: none; font-weight: 500; text-transform: none; }
-        .filter-select:focus { border-color: #ffeadb; box-shadow: 0 0 0 2px rgba(255, 234, 219, 0.5); }
+        /* Filter Styles */
+        .filter-select { display: block; width: 100%; margin-top: 5px; font-size: 11px; padding: 2px; border: 1px solid #cbd5e1; border-radius: 4px; color: #475569; }
         
-        /* Buttons */
-        .btn-action { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; transition: 0.2s; text-transform: uppercase; }
-        .btn-edit { background: #f8fafc; color: #0284c7; border: 1px solid #e0f2fe; }
-        .btn-edit:hover { background: #e0f2fe; }
-        .btn-delete { background: #fff1f2; color: #e11d48; border: 1px solid #ffe4e6; margin-left: 8px; }
-        .btn-delete:hover { background: #ffe4e6; }
+        /* Action Buttons */
+        .btn-edit { color: #0284c7; font-weight: 700; font-size: 12px; border: 1px solid #e0f2fe; padding: 4px 8px; border-radius: 4px; background: #f0f9ff; }
+        .btn-delete { color: #dc2626; font-weight: 700; font-size: 12px; border: 1px solid #fee2e2; padding: 4px 8px; border-radius: 4px; background: #fef2f2; margin-left: 4px; }
+        
+        .truncate-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .scroll-cell { max-height: 60px; overflow-y: auto; font-size: 12px; line-height: 1.4; color: #64748b; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
 
-    <!-- Navigation -->
     <nav class="bg-peach text-peach-dark p-4 sticky top-0 z-50 shadow-sm border-b border-[#f5d6c4]">
-        <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <h1 class="text-xl font-bold tracking-tight uppercase">Experiential <span class="opacity-70">Holidays</span></h1>
-            <div id="auth-section" class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-                <div id="user-profile" class="hidden flex flex-col md:flex-row items-center gap-3">
-                    <span id="user-role-badge" class="bg-white text-peach-dark px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest hidden border border-[#f5d6c4]">Admin</span>
-                    <span id="user-email" class="text-peach-dark font-medium text-sm md:border-r md:border-[#f5d6c4] md:pr-3"></span>
-                    <a href="index.html" class="text-peach-dark hover:opacity-70 font-bold text-sm">Submit New</a>
-                    <button id="logout-btn" class="text-peach-dark opacity-60 hover:opacity-100 text-[11px] uppercase font-bold">Logout</button>
-                </div>
+        <div class="max-w-[1600px] mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold uppercase tracking-tight">Experiential <span class="opacity-70">Dashboard</span></h1>
+            <div id="user-profile" class="hidden flex items-center gap-4">
+                <span id="admin-badge" class="hidden bg-orange-400 text-white px-2 py-0.5 rounded text-[10px] font-bold">ADMIN</span>
+                <span id="user-email" class="font-medium text-sm border-r border-[#f5d6c4] pr-3"></span>
+                <a href="index.html" class="text-sm font-bold bg-white px-3 py-1 rounded border border-[#f5d6c4]">Submit New</a>
+                <button id="logout-btn" class="text-[11px] uppercase font-bold opacity-60">Logout</button>
             </div>
         </div>
     </nav>
 
-    <div id="main-content" class="hidden max-w-[1400px] mx-auto p-4 md:p-8">
-        <header class="mb-6 flex justify-between items-end">
-            <div>
-                <h2 class="text-2xl font-bold text-slate-800 uppercase tracking-tight">Experience Dashboard</h2>
-                <p class="text-slate-500 text-sm" id="dashboard-subtitle">Loading your data...</p>
+    <div id="main-content" class="hidden p-4 md:p-8">
+        <div class="max-w-[1600px] mx-auto">
+            <div class="flex justify-between items-end mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800 uppercase">Experience Registry</h2>
+                    <p id="view-status" class="text-slate-500 text-sm italic">Loading experiences...</p>
+                </div>
+                <button onclick="window.location.reload()" class="text-xs font-bold text-slate-400 hover:text-slate-600">Refresh Data</button>
             </div>
-            <button id="clear-filters-btn" class="text-xs font-bold text-slate-500 hover:text-slate-800 bg-white border border-slate-200 px-3 py-1.5 rounded transition">Clear Filters</button>
-        </header>
 
-        <div class="table-container overflow-x-auto">
-            <table class="w-full text-left border-collapse min-w-[2500px]">
-                <thead>
-                    <tr>
-                        <th>Actions</th>
-                        <th>Title <select class="filter-select" data-col="retreatName"><option value="">All</option></select></th>
-                        <th>State <select class="filter-select" data-col="state"><option value="">All</option></select></th>
-                        <th>City <select class="filter-select" data-col="city"><option value="">All</option></select></th>
-                        <th>Host Email <select class="filter-select" data-col="hostEmail"><option value="">All</option></select></th>
-                        <th>Start Date <select class="filter-select" data-col="startDate"><option value="">All</option></select></th>
-                        <th>End Date</th>
-                        <th>Categories <select class="filter-select" data-col="categories"><option value="">All</option></select></th>
-                        <th>Org Info</th>
-                        <th>Contact Name <select class="filter-select" data-col="contactName"><option value="">All</option></select></th>
-                        <th>Contact Email</th>
-                        <th>WhatsApp</th>
-                        <th>Description</th>
-                        <th>Contribution</th>
-                        <th>Inclusions / Exclusions</th>
-                        <th>Links / Media</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <!-- Rows injected here -->
-                </tbody>
-            </table>
-        </div>
-        <div id="empty-state" class="hidden text-center p-12 text-slate-500 bg-white rounded-lg border border-slate-100 mt-4">
-            No experiences found.
+            <div class="table-wrapper overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[2000px]">
+                    <thead>
+                        <tr>
+                            <th>Actions</th>
+                            <th>Title <select class="filter-select" data-col="retreatName"><option value="">All</option></select></th>
+                            <th>Host Email <select class="filter-select" data-col="hostEmail"><option value="">All</option></select></th>
+                            <th>State <select class="filter-select" data-col="state"><option value="">All</option></select></th>
+                            <th>City <select class="filter-select" data-col="city"><option value="">All</option></select></th>
+                            <th>Date (Start - End)</th>
+                            <th>Categories <select class="filter-select" data-col="categories"><option value="">All</option></select></th>
+                            <th>Description</th>
+                            <th>Contribution</th>
+                            <th>Contact Person</th>
+                            <th>WhatsApp</th>
+                            <th>Media</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        </tbody>
+                </table>
+            </div>
+            <div id="empty-state" class="hidden text-center py-20 bg-white mt-4 rounded-xl border-2 border-dashed border-slate-200">
+                <p class="text-slate-400">No experiences found matching your filters.</p>
+            </div>
         </div>
     </div>
 
-    <!-- Login Prompt -->
     <div id="login-prompt" class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-sm border border-slate-100 text-center">
-        <h2 class="text-2xl font-bold text-slate-800 mb-2">Access Dashboard</h2>
-        <p class="text-slate-500 mb-6 text-sm">Please sign in to view your submitted experiences or manage platform data.</p>
+        <h2 class="text-xl font-bold text-slate-800 mb-6 uppercase">Dashboard Access</h2>
         <button id="login-btn" class="w-full bg-[#ffeadb] text-[#855d48] px-5 py-3 rounded-xl font-bold uppercase tracking-widest border border-[#f5d6c4] hover:bg-[#f5d6c4] transition">Sign In with Google</button>
     </div>
 
@@ -102,10 +89,8 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, getDocs, query, where, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ADD YOUR ADMIN EMAILS HERE
-        const ADMIN_EMAILS = [
-            "info.experientialholidays@gmail.com"
-        ];
+        // CONFIG: Add your admin emails here
+        const ADMIN_EMAILS = ["admin@example.com", "your-email@gmail.com"];
 
         const firebaseConfig = {
             apiKey: "AIzaSyAY2ipuHLEq40P-mkN0NaPvZVDrum4NoIs",
@@ -121,10 +106,9 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        let allData = []; // Holds master copy of data
-        let filteredData = []; // Holds data after filters are applied
+        let rawData = [];
+        let filteredData = [];
 
-        // Auth listeners
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('login-prompt').classList.add('hidden');
@@ -133,11 +117,11 @@
                 document.getElementById('user-email').innerText = user.email;
                 
                 const isAdmin = ADMIN_EMAILS.includes(user.email);
-                if(isAdmin) document.getElementById('user-role-badge').classList.remove('hidden');
+                if(isAdmin) document.getElementById('admin-badge').classList.remove('hidden');
                 
-                document.getElementById('dashboard-subtitle').innerText = isAdmin ? "Viewing all platform submissions (Admin Mode)" : "Viewing your submitted experiences";
+                document.getElementById('view-status').innerText = isAdmin ? "Viewing All Submissions (Admin)" : "Viewing Your Submissions";
                 
-                await loadData(user.email, isAdmin);
+                fetchData(user.email, isAdmin);
             } else {
                 document.getElementById('login-prompt').classList.remove('hidden');
                 document.getElementById('user-profile').classList.add('hidden');
@@ -148,153 +132,112 @@
         document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-        // Fetch Data
-        async function loadData(userEmail, isAdmin) {
+        async function fetchData(email, isAdmin) {
             const retreatsRef = collection(db, "retreats");
-            const q = isAdmin ? retreatsRef : query(retreatsRef, where("hostEmail", "==", userEmail));
+            const q = isAdmin ? retreatsRef : query(retreatsRef, where("hostEmail", "==", email));
             
-            const snapshot = await getDocs(q);
-            allData = [];
-            snapshot.forEach(doc => {
-                allData.push({ id: doc.id, ...doc.data() });
-            });
-            
-            // Sort by newest first
-            allData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            filteredData = [...allData];
-            
-            populateFilterOptions();
-            renderTable();
+            try {
+                const snap = await getDocs(q);
+                rawData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                filteredData = [...rawData];
+                setupFilters();
+                renderTable();
+            } catch (e) { alert("Error fetching data: " + e.message); }
         }
 
-        // Render Table
         function renderTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
-
-            if (filteredData.length === 0) {
+            
+            if(filteredData.length === 0) {
                 document.getElementById('empty-state').classList.remove('hidden');
-            } else {
-                document.getElementById('empty-state').classList.add('hidden');
-                
-                filteredData.forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition";
-                    
-                    // Format Categories safely
-                    const cats = Array.isArray(row.categories) ? row.categories.join(', ') : (row.categories || 'None');
-                    // Format Media Links safely
-                    let mediaHtml = '';
-                    if(row.youtubeLink) mediaHtml += `<a href="${row.youtubeLink}" target="_blank" class="text-blue-500 hover:underline block text-xs mb-1">YouTube</a>`;
-                    if(row.fileUrls && row.fileUrls.length > 0) mediaHtml += `<span class="text-slate-500 text-xs block">${row.fileUrls.length} File(s) Uploaded</span>`;
-                    if(row.externalLinks && row.externalLinks.length > 0) mediaHtml += `<span class="text-slate-500 text-xs block">${row.externalLinks.length} External Link(s)</span>`;
-
-                    tr.innerHTML = `
-                        <td class="whitespace-nowrap">
-                            <button onclick="editDoc('${row.id}')" class="btn-action btn-edit">Edit</button>
-                            <button onclick="deleteDocHandler('${row.id}')" class="btn-action btn-delete">Del</button>
-                        </td>
-                        <td class="font-semibold text-slate-800">${row.retreatName || '-'}</td>
-                        <td>${row.state || '-'}</td>
-                        <td>${row.city || '-'}</td>
-                        <td class="text-xs text-slate-500">${row.hostEmail || '-'}</td>
-                        <td>${row.startDate || '-'} <span class="text-xs text-slate-400 block">${row.startTime || ''}</span></td>
-                        <td>${row.endDate || '-'} <span class="text-xs text-slate-400 block">${row.endTime || ''}</span></td>
-                        <td class="text-xs"><div class="cell-scroll">${cats}</div></td>
-                        <td><div class="cell-scroll text-xs">${row.orgInfo || '-'}</div></td>
-                        <td>${row.contactName || '-'}</td>
-                        <td class="text-xs text-slate-500">${row.orgContactEmail || '-'}</td>
-                        <td>${row.contactWhatsApp || '-'}</td>
-                        <td><div class="cell-scroll text-xs text-slate-600">${row.description || '-'}</div></td>
-                        <td><div class="cell-scroll text-xs text-slate-600">${row.contribution || '-'}</div></td>
-                        <td><div class="cell-scroll text-xs text-slate-600">${row.inclusionsExclusions || '-'}</div></td>
-                        <td>${mediaHtml || '-'}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                return;
             }
+            document.getElementById('empty-state').classList.add('hidden');
+
+            filteredData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                
+                // Format Multi-fields
+                const cats = Array.isArray(row.categories) ? row.categories.join(", ") : row.categories;
+                const mediaCount = (row.fileUrls?.length || 0) + (row.youtubeLink ? 1 : 0) + (row.externalLinks?.length || 0);
+
+                tr.innerHTML = `
+                    <td class="whitespace-nowrap">
+                        <button onclick="editRow('${row.id}')" class="btn-edit">Edit</button>
+                        <button onclick="deleteRow('${row.id}')" class="btn-delete">Del</button>
+                    </td>
+                    <td class="font-bold text-slate-700">${row.retreatName}</td>
+                    <td class="text-xs text-slate-400">${row.hostEmail}</td>
+                    <td>${row.state}</td>
+                    <td>${row.city}</td>
+                    <td>
+                        <div class="text-xs font-bold">${row.startDate}</div>
+                        <div class="text-[10px] text-slate-400">to ${row.endDate}</div>
+                    </td>
+                    <td><div class="scroll-cell" style="width:150px">${cats}</div></td>
+                    <td><div class="scroll-cell" style="width:250px">${row.description}</div></td>
+                    <td><div class="scroll-cell" style="width:150px">${row.contribution || '-'}</div></td>
+                    <td>
+                        <div class="font-medium">${row.contactName}</div>
+                        <div class="text-[10px] text-slate-400">${row.orgContactEmail}</div>
+                    </td>
+                    <td class="whitespace-nowrap font-mono text-xs">${row.contactWhatsApp || '-'}</td>
+                    <td><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">${mediaCount} Items</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        // Setup Sheet-like Filters
-        function populateFilterOptions() {
+        function setupFilters() {
             const selects = document.querySelectorAll('.filter-select');
             selects.forEach(select => {
                 const col = select.getAttribute('data-col');
-                const uniqueVals = new Set();
+                const uniqueValues = new Set();
                 
-                allData.forEach(item => {
+                rawData.forEach(item => {
                     if (col === 'categories' && Array.isArray(item[col])) {
-                        item[col].forEach(c => uniqueVals.add(c));
+                        item[col].forEach(c => uniqueValues.add(c));
                     } else if (item[col]) {
-                        uniqueVals.add(item[col]);
+                        uniqueValues.add(item[col]);
                     }
                 });
 
-                // Keep the "All" option, clear the rest
                 select.innerHTML = '<option value="">All</option>';
-                
-                Array.from(uniqueVals).sort().forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    // Truncate long options
-                    opt.text = val.length > 30 ? val.substring(0, 30) + '...' : val; 
-                    select.appendChild(opt);
+                Array.from(uniqueValues).sort().forEach(val => {
+                    select.innerHTML += `<option value="${val}">${val}</option>`;
                 });
 
-                // Attach event listener
-                select.addEventListener('change', applyFilters);
+                select.onchange = applyFilters;
             });
         }
 
         function applyFilters() {
             const selects = document.querySelectorAll('.filter-select');
-            let activeFilters = {};
-            
-            selects.forEach(s => {
-                if(s.value !== "") {
-                    activeFilters[s.getAttribute('data-col')] = s.value;
-                }
+            filteredData = rawData.filter(item => {
+                return Array.from(selects).every(select => {
+                    const val = select.value;
+                    const col = select.getAttribute('data-col');
+                    if (!val) return true;
+                    if (col === 'categories') return item[col] && item[col].includes(val);
+                    return item[col] == val;
+                });
             });
-
-            filteredData = allData.filter(item => {
-                for (let col in activeFilters) {
-                    const filterVal = activeFilters[col];
-                    if (col === 'categories') {
-                        if (!Array.isArray(item[col]) || !item[col].includes(filterVal)) return false;
-                    } else {
-                        if (item[col] !== filterVal) return false;
-                    }
-                }
-                return true;
-            });
-
             renderTable();
         }
 
-        document.getElementById('clear-filters-btn').onclick = () => {
-            document.querySelectorAll('.filter-select').forEach(s => s.value = "");
-            filteredData = [...allData];
-            renderTable();
-        };
-
-        // Actions
-        window.editDoc = (id) => {
+        // Global functions for buttons
+        window.editRow = (id) => {
             window.location.href = `index.html?editId=${id}`;
         };
 
-        window.deleteDocHandler = async (id) => {
-            if(confirm("Are you sure you want to delete this experience? This cannot be undone.")) {
-                try {
-                    await deleteDoc(doc(db, "retreats", id));
-                    // Remove from local arrays to update UI instantly
-                    allData = allData.filter(d => d.id !== id);
-                    applyFilters(); // Re-applies filters and re-renders
-                } catch(e) {
-                    alert("Error deleting: " + e.message);
-                }
+        window.deleteRow = async (id) => {
+            if(confirm("Permanently delete this experience?")) {
+                await deleteDoc(doc(db, "retreats", id));
+                location.reload();
             }
         };
-
     </script>
 </body>
-        </html>
+</html>
