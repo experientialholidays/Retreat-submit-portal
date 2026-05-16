@@ -74,7 +74,11 @@
                     <div><label class="input-label">Inclusions & Exclusions</label><textarea id="inclusionsExclusions" rows="3" class="custom-input"></textarea></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div><label class="input-label">YouTube Video Link</label><input type="url" id="youtubeLink" class="custom-input"></div>
+                    <div>
+                        <label class="input-label">Video Link (YouTube or Instagram) (Max 5)</label>
+                        <div id="video-links-container" class="space-y-2"><input type="url" class="video-link-input custom-input" placeholder="https://..."></div>
+                        <button type="button" id="add-video-link-btn" class="mt-2 btn-soft">+ Add Another Video Link</button>
+                    </div>
                     <div>
                         <label class="input-label">Media Upload (Max 10)</label>
                         <div id="file-upload-container" class="space-y-2"><input type="file" class="file-input-item block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-white file:border file:border-slate-200"></div>
@@ -169,6 +173,17 @@
             }
         };
 
+        document.getElementById('add-video-link-btn').onclick = () => {
+            const container = document.getElementById('video-links-container');
+            if (container.querySelectorAll('input').length < 5) {
+                const input = document.createElement('input');
+                input.type = 'url';
+                input.className = 'video-link-input custom-input mt-2';
+                input.placeholder = 'https://...';
+                container.appendChild(input);
+            }
+        };
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('login-btn').classList.add('hidden');
@@ -204,10 +219,21 @@
             document.getElementById('description').value = r.description || "";
             document.getElementById('contribution').value = r.contribution || "";
             document.getElementById('inclusionsExclusions').value = r.inclusionsExclusions || "";
-            document.getElementById('youtubeLink').value = r.youtubeLink || "";
             document.getElementById('orgInfo').value = r.orgInfo || "";
             document.getElementById('contactName').value = r.contactName || "";
             document.getElementById('orgContactEmail').value = r.orgContactEmail || "";
+
+            if (r.videoLinks && r.videoLinks.length > 0) {
+                const container = document.getElementById('video-links-container');
+                container.innerHTML = '';
+                r.videoLinks.forEach(link => {
+                    const input = document.createElement('input');
+                    input.type = 'url';
+                    input.className = 'video-link-input custom-input mt-2';
+                    input.value = link;
+                    container.appendChild(input);
+                });
+            }
 
             if (r.contactWhatsApp && r.contactWhatsApp.includes('+')) {
                 document.getElementById('countryCode').value = r.contactWhatsApp.substring(0, 3);
@@ -294,7 +320,7 @@
                     categories: selectedCats,
                     contribution: document.getElementById('contribution').value,
                     inclusionsExclusions: document.getElementById('inclusionsExclusions').value,
-                    youtubeLink: document.getElementById('youtubeLink').value,
+                    videoLinks: Array.from(document.querySelectorAll('.video-link-input')).map(i => i.value).filter(v => v !== ""),
                     orgInfo: document.getElementById('orgInfo').value,
                     contactName: document.getElementById('contactName').value,
                     contactWhatsApp: document.getElementById('countryCode').value + document.getElementById('contactWhatsApp').value,
@@ -311,4 +337,4 @@
         };
     </script>
 </body>
-</html>
+    </html>
