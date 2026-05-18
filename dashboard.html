@@ -38,19 +38,29 @@
             <header class="mb-6"><h2 class="text-2xl font-bold text-slate-800 uppercase">Experience Registry</h2></header>
 
             <div class="table-wrapper overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[2000px]">
+                <table class="w-full text-left border-collapse min-w-[3200px]">
                     <thead>
                         <tr>
                             <th>Actions</th>
-                            <th>Title <select class="filter-select" data-col="retreatName"><option value="">All</option></select></th>
-                            <th>Host Email <select class="filter-select" data-col="hostEmail"><option value="">All</option></select></th>
-                            <th>State <select class="filter-select" data-col="state"><option value="">All</option></select></th>
-                            <th>City <select class="filter-select" data-col="city"><option value="">All</option></select></th>
-                            <th>Date (Start - End)</th>
-                            <th>Categories <select class="filter-select" data-col="categories"><option value="">All</option></select></th>
-                            <th>Description</th>
-                            <th>Contact Person</th>
-                            <th>Media</th>
+                            <th>Title <select class="filter-select admin-only hidden" data-col="retreatName"><option value="">All</option></select></th>
+                            <th>Host Email <select class="filter-select admin-only hidden" data-col="hostEmail"><option value="">All</option></select></th>
+                            <th>State <select class="filter-select admin-only hidden" data-col="state"><option value="">All</option></select></th>
+                            <th>City <select class="filter-select admin-only hidden" data-col="city"><option value="">All</option></select></th>
+                            <th>Start Date <select class="filter-select admin-only hidden" data-col="startDate"><option value="">All</option></select></th>
+                            <th>Start Time <select class="filter-select admin-only hidden" data-col="startTime"><option value="">All</option></select></th>
+                            <th>End Date <select class="filter-select admin-only hidden" data-col="endDate"><option value="">All</option></select></th>
+                            <th>End Time <select class="filter-select admin-only hidden" data-col="endTime"><option value="">All</option></select></th>
+                            <th>Categories <select class="filter-select admin-only hidden" data-col="categories"><option value="">All</option></select></th>
+                            <th>Description <select class="filter-select admin-only hidden" data-col="description"><option value="">All</option></select></th>
+                            <th>Contribution/Price <select class="filter-select admin-only hidden" data-col="contribution"><option value="">All</option></select></th>
+                            <th>Inclusions/Exclusions <select class="filter-select admin-only hidden" data-col="inclusionsExclusions"><option value="">All</option></select></th>
+                            <th>Video Links <select class="filter-select admin-only hidden" data-col="videoLinks"><option value="">All</option></select></th>
+                            <th>Organization Info <select class="filter-select admin-only hidden" data-col="orgInfo"><option value="">All</option></select></th>
+                            <th>Contact Person <select class="filter-select admin-only hidden" data-col="contactName"><option value="">All</option></select></th>
+                            <th>Contact Email <select class="filter-select admin-only hidden" data-col="orgContactEmail"><option value="">All</option></select></th>
+                            <th>WhatsApp Number <select class="filter-select admin-only hidden" data-col="contactWhatsApp"><option value="">All</option></select></th>
+                            <th>External Links <select class="filter-select admin-only hidden" data-col="externalLinks"><option value="">All</option></select></th>
+                            <th>Media <select class="filter-select admin-only hidden" data-col="fileUrls"><option value="">All</option></select></th>
                         </tr>
                     </thead>
                     <tbody id="table-body"></tbody>
@@ -96,7 +106,11 @@
                 const adminSnap = await getDoc(doc(db, "admins", user.email.toLowerCase().trim()));
                 const isAdmin = adminSnap.exists();
                 
-                if(isAdmin) document.getElementById('admin-badge').classList.remove('hidden');
+                if(isAdmin) {
+                    document.getElementById('admin-badge').classList.remove('hidden');
+                    document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+                }
+                
                 fetchData(user.email, isAdmin);
             } else {
                 document.getElementById('login-prompt').classList.remove('hidden');
@@ -124,16 +138,53 @@
             filteredData.forEach(row => {
                 const tr = document.createElement('tr');
                 const cats = Array.isArray(row.categories) ? row.categories.join(", ") : row.categories;
+                
+                // Formatted Media Files
+                let mediaContent = 'No files';
+                if (row.fileUrls && row.fileUrls.length > 0) {
+                    mediaContent = row.fileUrls.map((url, i) => {
+                        let fileName = `File ${i + 1}`;
+                        try {
+                            const decoded = decodeURIComponent(url);
+                            fileName = decoded.split('/').pop().split('?')[0] || fileName;
+                        } catch(e) {}
+                        return `<a href="${url}" target="_blank" class="text-[#0284c7] underline text-[11px] block truncate" title="${fileName}">${fileName}</a>`;
+                    }).join('');
+                }
+
+                // Formatted Video Links
+                let videoContent = '';
+                if (row.videoLinks && row.videoLinks.length > 0) {
+                    videoContent = row.videoLinks.map(url => `<a href="${url}" target="_blank" class="text-[#0284c7] underline text-[11px] block truncate" title="${url}">${url}</a>`).join('');
+                }
+
+                // Formatted External Web Links
+                let externalContent = '';
+                if (row.externalLinks && row.externalLinks.length > 0) {
+                    externalContent = row.externalLinks.map(url => `<a href="${url}" target="_blank" class="text-[#0284c7] underline text-[11px] block truncate" title="${url}">${url}</a>`).join('');
+                }
+
                 tr.innerHTML = `
                     <td><button onclick="editRow('${row.id}')" class="btn-edit">Edit</button><button onclick="deleteRow('${row.id}')" class="btn-delete">Del</button></td>
-                    <td class="font-bold">${row.retreatName}</td>
-                    <td class="text-xs">${row.hostEmail}</td>
-                    <td>${row.state}</td><td>${row.city}</td>
-                    <td class="text-xs">${row.startDate} to ${row.endDate}</td>
-                    <td><div class="scroll-cell" style="width:150px">${cats}</div></td>
-                    <td><div class="scroll-cell" style="width:250px">${row.description}</div></td>
-                    <td>${row.contactName}</td>
-                    <td>${(row.fileUrls?.length || 0)} Files</td>
+                    <td class="font-bold">${row.retreatName || ''}</td>
+                    <td class="text-xs">${row.hostEmail || ''}</td>
+                    <td>${row.state || ''}</td>
+                    <td>${row.city || ''}</td>
+                    <td class="text-xs">${row.startDate || ''}</td>
+                    <td class="text-xs">${row.startTime || ''}</td>
+                    <td class="text-xs">${row.endDate || ''}</td>
+                    <td class="text-xs">${row.endTime || ''}</td>
+                    <td><div class="scroll-cell" style="width:150px">${cats || ''}</div></td>
+                    <td><div class="scroll-cell" style="width:200px">${row.description || ''}</div></td>
+                    <td><div class="scroll-cell" style="width:180px">${row.contribution || ''}</div></td>
+                    <td><div class="scroll-cell" style="width:180px">${row.inclusionsExclusions || ''}</div></td>
+                    <td><div class="scroll-cell" style="width:150px">${videoContent || 'No videos'}</div></td>
+                    <td><div class="scroll-cell" style="width:180px">${row.orgInfo || ''}</div></td>
+                    <td>${row.contactName || ''}</td>
+                    <td class="text-xs">${row.orgContactEmail || ''}</td>
+                    <td class="text-xs">${row.contactWhatsApp || ''}</td>
+                    <td><div class="scroll-cell" style="width:150px">${externalContent || 'No links'}</div></td>
+                    <td><div class="scroll-cell" style="width:150px">${mediaContent}</div></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -143,12 +194,29 @@
             document.querySelectorAll('.filter-select').forEach(select => {
                 const col = select.getAttribute('data-col');
                 const vals = new Set();
-                rawData.forEach(item => { if(item[col]) vals.add(item[col]); });
+                
+                rawData.forEach(item => { 
+                    if(item[col]) {
+                        const valString = Array.isArray(item[col]) ? item[col].join(", ") : item[col];
+                        vals.add(valString);
+                    } 
+                });
+                
                 select.innerHTML = '<option value="">All</option>';
-                Array.from(vals).sort().forEach(v => select.innerHTML += `<option value="${v}">${v}</option>`);
+                Array.from(vals).sort().forEach(v => {
+                    const displayVal = String(v).length > 25 ? String(v).substring(0, 25) + '...' : v;
+                    select.innerHTML += `<option value="${v}">${displayVal}</option>`;
+                });
+
                 select.onchange = () => {
                     const selects = document.querySelectorAll('.filter-select');
-                    filteredData = rawData.filter(item => Array.from(selects).every(s => !s.value || item[s.getAttribute('data-col')] == s.value));
+                    filteredData = rawData.filter(item => Array.from(selects).every(s => {
+                        if (!s.value) return true;
+                        const itemVal = Array.isArray(item[s.getAttribute('data-col')]) 
+                            ? item[s.getAttribute('data-col')].join(", ") 
+                            : item[s.getAttribute('data-col')];
+                        return itemVal == s.value;
+                    }));
                     renderTable();
                 };
             });
@@ -158,4 +226,4 @@
         window.deleteRow = async (id) => confirm("Delete permanently?") && (await deleteDoc(doc(db, "retreats", id)), location.reload());
     </script>
 </body>
-</html>
+    </html>
