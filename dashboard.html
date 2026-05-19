@@ -55,12 +55,12 @@
                             <th>Contribution/Price <select class="filter-select admin-only hidden" data-col="contribution"><option value="">All</option></select></th>
                             <th>Inclusions/Exclusions <select class="filter-select admin-only hidden" data-col="inclusionsExclusions"><option value="">All</option></select></th>
                             <th>Video Links <select class="filter-select admin-only hidden" data-col="videoLinks"><option value="">All</option></select></th>
-                            <th>Organization/ Host Info <select class="filter-select admin-only hidden" data-col="orgInfo"><option value="">All</option></select></th>
+                            <th>Media <select class="filter-select admin-only hidden" data-col="fileUrls"><option value="">All</option></select></th>
+                            <th>organization/ host name ( with bio) <select class="filter-select admin-only hidden" data-col="orgInfo"><option value="">All</option></select></th>
                             <th>Contact Person <select class="filter-select admin-only hidden" data-col="contactName"><option value="">All</option></select></th>
                             <th>Contact Email <select class="filter-select admin-only hidden" data-col="orgContactEmail"><option value="">All</option></select></th>
                             <th>WhatsApp Number <select class="filter-select admin-only hidden" data-col="contactWhatsApp"><option value="">All</option></select></th>
                             <th>External Links <select class="filter-select admin-only hidden" data-col="externalLinks"><option value="">All</option></select></th>
-                            <th>Media <select class="filter-select admin-only hidden" data-col="fileUrls"><option value="">All</option></select></th>
                         </tr>
                     </thead>
                     <tbody id="table-body"></tbody>
@@ -122,108 +122,113 @@
         document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
+        window.deleteEntry = async (id) => {
+            if(confirm("Are you sure you want to delete this experience?")) {
+                await deleteDoc(doc(db, "retreats", id));
+                rawData = rawData.filter(r => r.id !== id);
+                applyFilters();
+            }
+        };
+
         async function fetchData(email, isAdmin) {
-            const retreatsRef = collection(db, "retreats");
-            const q = isAdmin ? retreatsRef : query(retreatsRef, where("hostEmail", "==", email));
+            const q = isAdmin ? collection(db, "retreats") : query(collection(db, "retreats"), where("hostEmail", "==", email));
             const snap = await getDocs(q);
-            rawData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            rawData = snap.docs.map(d => ({id: d.id, ...d.data()}));
             filteredData = [...rawData];
-            setupFilters();
+            populateFilters();
+            renderTable();
+        }
+
+        function populateFilters() {
+            const selects = document.querySelectorAll('.filter-select');
+            selects.forEach(select => {
+                const col = select.dataset.col;
+                let uniqueVals = new Set();
+
+                rawData.forEach(r => {
+                    if (r[col]) {
+                        // Extract individual categories for exact filtering
+                        if (col === 'categories' && Array.isArray(r[col])) {
+                            r[col].forEach(cat => uniqueVals.add(cat.trim()));
+                        } else if (Array.isArray(r[col])) {
+                            uniqueVals.add(r[col].join(', '));
+                        } else {
+                            uniqueVals.add(r[col]);
+                        }
+                    }
+                });
+
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">All</option>';
+                Array.from(uniqueVals).sort().forEach(val => {
+                    if(val) select.innerHTML += `<option value="${val}">${val}</option>`;
+                });
+                select.value = currentVal;
+
+                select.onchange = applyFilters;
+            });
+        }
+
+        function applyFilters() {
+            filteredData = rawData.filter(r => {
+                let match = true;
+                document.querySelectorAll('.filter-select').forEach(select => {
+                    const col = select.dataset.col;
+                    const val = select.value;
+                    if (val) {
+                        // Check if the individual category is included in the array
+                        if (col === 'categories' && Array.isArray(r[col])) {
+                            if (!r[col].includes(val)) match = false;
+                        } else if (Array.isArray(r[col])) {
+                            if (r[col].join(', ') !== val) match = false;
+                        } else {
+                            if (r[col] != val) match = false;
+                        }
+                    }
+                });
+                return match;
+            });
             renderTable();
         }
 
         function renderTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
-            filteredData.forEach(row => {
-                const tr = document.createElement('tr');
-                const cats = Array.isArray(row.categories) ? row.categories.join(", ") : row.categories;
+            filteredData.forEach(r => {
+                let catHtml = (r.categories || []).join(', ');
+                let vidHtml = (r.videoLinks || []).map(l => `<a href="${l}" target="_blank" class="text-blue-500 underline block">Link</a>`).join('');
+                let extHtml = (r.externalLinks || []).map(l => `<a href="${l}" target="_blank" class="text-blue-500 underline block">Link</a>`).join('');
+                let mediaHtml = (r.fileUrls || []).map((l,i) => `<a href="${l}" target="_blank" class="text-blue-500 underline block">File ${i+1}</a>`).join('');
                 
-                // Formatted Media Files
-                let mediaContent = 'No files';
-                if (row.fileUrls && row.fileUrls.length > 0) {
-                    mediaContent = row.fileUrls.map((url, i) => {
-                        let fileName = `File ${i + 1}`;
-                        try {
-                            const decoded = decodeURIComponent(url);
-                            fileName = decoded.split('/').pop().split('?')[0] || fileName;
-                        } catch(e) {}
-                        return `<a href="${url}" target="_blank" class="text-[#0284c7] underline text-[11px] block truncate" title="${fileName}">${fileName}</a>`;
-                    }).join('');
-                }
-
-                // Formatted Video Links
-                let videoContent = '';
-                if (row.videoLinks && row.videoLinks.length > 0) {
-                    videoContent = row.videoLinks.map(url => `<a href="${url}" target="_blank" class="text-[#0284c7] underline text-[11px] block truncate" title="${url}">${url}</a>`).join('');
-                }
-
-                // Formatted External Web Links
-                let externalContent = '';
-                if (row.externalLinks && row.externalLinks.length > 0) {
-                    externalContent = row.externalLinks.map(url => `<a href="${url}" target="_blank" class="text-[#0284c7] underline text-[11px] block truncate" title="${url}">${url}</a>`).join('');
-                }
-
-                tr.innerHTML = `
-                    <td><button onclick="editRow('${row.id}')" class="btn-edit">Edit</button><button onclick="deleteRow('${row.id}')" class="btn-delete">Del</button></td>
-                    <td class="font-bold">${row.retreatName || ''}</td>
-                    <td class="text-xs">${row.hostEmail || ''}</td>
-                    <td>${row.state || ''}</td>
-                    <td>${row.city || ''}</td>
-                    <td class="text-xs">${row.startDate || ''}</td>
-                    <td class="text-xs">${row.startTime || ''}</td>
-                    <td class="text-xs">${row.endDate || ''}</td>
-                    <td class="text-xs">${row.endTime || ''}</td>
-                    <td><div class="scroll-cell" style="width:150px">${cats || ''}</div></td>
-                    <td><div class="scroll-cell" style="width:200px">${row.description || ''}</div></td>
-                    <td><div class="scroll-cell" style="width:180px">${row.contribution || ''}</div></td>
-                    <td><div class="scroll-cell" style="width:180px">${row.inclusionsExclusions || ''}</div></td>
-                    <td><div class="scroll-cell" style="width:150px">${videoContent || 'No videos'}</div></td>
-                    <td><div class="scroll-cell" style="width:180px">${row.orgInfo || ''}</div></td>
-                    <td>${row.contactName || ''}</td>
-                    <td class="text-xs">${row.orgContactEmail || ''}</td>
-                    <td class="text-xs">${row.contactWhatsApp || ''}</td>
-                    <td><div class="scroll-cell" style="width:150px">${externalContent || 'No links'}</div></td>
-                    <td><div class="scroll-cell" style="width:150px">${mediaContent}</div></td>
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="whitespace-nowrap">
+                            <a href="index.html?editId=${r.id}" class="btn-edit">Edit</a>
+                            <button onclick="deleteEntry('${r.id}')" class="btn-delete">Del</button>
+                        </td>
+                        <td>${r.retreatName || ''}</td>
+                        <td>${r.hostEmail || ''}</td>
+                        <td>${r.state || ''}</td>
+                        <td>${r.city || ''}</td>
+                        <td>${r.startDate || ''}</td>
+                        <td>${r.startTime || ''}</td>
+                        <td>${r.endDate || ''}</td>
+                        <td>${r.endTime || ''}</td>
+                        <td><div class="scroll-cell">${catHtml}</div></td>
+                        <td><div class="scroll-cell">${r.description || ''}</div></td>
+                        <td><div class="scroll-cell">${r.contribution || ''}</div></td>
+                        <td><div class="scroll-cell">${r.inclusionsExclusions || ''}</div></td>
+                        <td><div class="scroll-cell">${vidHtml}</div></td>
+                        <td><div class="scroll-cell">${mediaHtml}</div></td>
+                        <td><div class="scroll-cell">${r.orgInfo || ''}</div></td>
+                        <td>${r.contactName || ''}</td>
+                        <td>${r.orgContactEmail || ''}</td>
+                        <td>${r.contactWhatsApp || ''}</td>
+                        <td><div class="scroll-cell">${extHtml}</div></td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
             });
         }
-
-        function setupFilters() {
-            document.querySelectorAll('.filter-select').forEach(select => {
-                const col = select.getAttribute('data-col');
-                const vals = new Set();
-                
-                rawData.forEach(item => { 
-                    if(item[col]) {
-                        const valString = Array.isArray(item[col]) ? item[col].join(", ") : item[col];
-                        vals.add(valString);
-                    } 
-                });
-                
-                select.innerHTML = '<option value="">All</option>';
-                Array.from(vals).sort().forEach(v => {
-                    const displayVal = String(v).length > 25 ? String(v).substring(0, 25) + '...' : v;
-                    select.innerHTML += `<option value="${v}">${displayVal}</option>`;
-                });
-
-                select.onchange = () => {
-                    const selects = document.querySelectorAll('.filter-select');
-                    filteredData = rawData.filter(item => Array.from(selects).every(s => {
-                        if (!s.value) return true;
-                        const itemVal = Array.isArray(item[s.getAttribute('data-col')]) 
-                            ? item[s.getAttribute('data-col')].join(", ") 
-                            : item[s.getAttribute('data-col')];
-                        return itemVal == s.value;
-                    }));
-                    renderTable();
-                };
-            });
-        }
-
-        window.editRow = (id) => window.location.href = `index.html?editId=${id}`;
-        window.deleteRow = async (id) => confirm("Delete permanently?") && (await deleteDoc(doc(db, "retreats", id)), location.reload());
     </script>
 </body>
     </html>
