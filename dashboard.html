@@ -43,7 +43,7 @@
                         <tr>
                             <th>Actions</th>
                             <th>Title <select class="filter-select admin-only hidden" data-col="retreatName"><option value="">All</option></select></th>
-                            <th>Host Email <select class="filter-select admin-only hidden" data-col="hostEmail"><option value="">All</option></select></th>
+                            <th class="admin-only hidden">Submitted by <select class="filter-select" data-col="hostEmail"><option value="">All</option></select></th>
                             <th>State <select class="filter-select admin-only hidden" data-col="state"><option value="">All</option></select></th>
                             <th>Location <select class="filter-select admin-only hidden" data-col="city"><option value="">All</option></select></th>
                             <th>Start Date <select class="filter-select admin-only hidden" data-col="startDate"><option value="">All</option></select></th>
@@ -94,6 +94,7 @@
 
         let rawData = [];
         let filteredData = [];
+        let isAdminGlobal = false;
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -105,6 +106,7 @@
                 // --- SECRET ADMIN CHECK ---
                 const adminSnap = await getDoc(doc(db, "admins", user.email.toLowerCase().trim()));
                 const isAdmin = adminSnap.exists();
+                isAdminGlobal = isAdmin;
                 
                 if(isAdmin) {
                     document.getElementById('admin-badge').classList.remove('hidden');
@@ -196,9 +198,19 @@
             tbody.innerHTML = '';
             filteredData.forEach(r => {
                 let catHtml = (r.categories || []).join(', ');
-                let vidHtml = (r.videoLinks || []).map(l => `<a href="${l}" target="_blank" class="text-blue-500 underline block">Link</a>`).join('');
-                let extHtml = (r.externalLinks || []).map(l => `<a href="${l}" target="_blank" class="text-blue-500 underline block">Link</a>`).join('');
-                let mediaHtml = (r.fileUrls || []).map((l,i) => `<a href="${l}" target="_blank" class="text-blue-500 underline block">File ${i+1}</a>`).join('');
+                
+                let vidHtml = (r.videoLinks || []).map(l => `<a href="${l}" target="_blank" class="text-blue-500 underline block break-all">${l}</a>`).join('');
+                
+                let extHtml = (r.externalLinks || []).map(l => `<a href="${l}" target="_blank" class="text-blue-500 underline block break-all">${l}</a>`).join('');
+                
+                let mediaHtml = (r.fileUrls || []).map((l, i) => {
+                    let fileName = `File ${i + 1}`;
+                    try {
+                        const decoded = decodeURIComponent(l);
+                        fileName = decoded.split('/').pop().split('?')[0] || fileName;
+                    } catch(e) {}
+                    return `<a href="${l}" target="_blank" class="text-blue-500 underline block break-all">${fileName}</a>`;
+                }).join('');
                 
                 tbody.innerHTML += `
                     <tr>
@@ -207,7 +219,7 @@
                             <button onclick="deleteEntry('${r.id}')" class="btn-delete">Del</button>
                         </td>
                         <td>${r.retreatName || ''}</td>
-                        <td>${r.hostEmail || ''}</td>
+                        <td class="${isAdminGlobal ? '' : 'hidden'}">${r.hostEmail || ''}</td>
                         <td>${r.state || ''}</td>
                         <td>${r.city || ''}</td>
                         <td>${r.startDate || ''}</td>
@@ -231,4 +243,4 @@
         }
     </script>
 </body>
-    </html>
+</html>
